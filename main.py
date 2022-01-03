@@ -14,8 +14,9 @@ def index():
     db = database.get_db(conf)
     e = database.get_entries(db, conf)
     entries = e.fetchall()
+    percs = get_percs()
     db.close()
-    return render_template("index.html", entries=entries, headers=e.description, total=len(entries))
+    return render_template("index.html", entries=entries, headers=e.description, percs=percs, total=len(entries))
 
 
 @app.route("/add/maker", methods=["GET", "POST"])
@@ -29,7 +30,8 @@ def add_maker():
             print('stop failing')
             return redirect("/")
         db = database.get_db(conf)
-        entry = database.add_maker(db, {'name': name, 'display': display}, conf)
+        entry = database.add_maker(
+            db, {'name': name, 'display': display}, conf)
         print(entry.fetchall())
         db.close()
         return redirect("/")
@@ -56,7 +58,7 @@ def add_entry():
             result = False
         db = database.get_db(conf)
         entry = database.add_entry(db, {'maker_id': maker, 'link': link,
-                                        'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)                                      
+                                        'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)
         db.close()
         return redirect("/")
     else:
@@ -65,17 +67,20 @@ def add_entry():
         db.close()
         return render_template("add-entry.html", makers=makers)
 
+
 @app.route("/edit/entry", methods=["GET", "POST"])
 def edit_entry():
     db = database.get_db(conf)
     entry = db.get_entry(request.form['id'])
     return render_template("edit-entry.html", entry=entry)
 
+
 @app.route("/edit/maker", methods=["GET", "POST"])
 def edit_maker():
     db = database.get_db(conf)
     maker = db.get_maker(request.form['id'])
     return render_template("edit-maker.html", maker=maker)
+
 
 @app.route("/toggle-result", methods=["POST"])
 def toggle_result():
@@ -92,5 +97,22 @@ def toggle_result():
     return {'success': 'OK', 'message': toggle, 'id': id, 'result': result}
 
 
+def get_percs():
+    db = database.get_db(conf)
+
+    p = database.get_percents(db, conf)
+    pes = p.fetchall()
+    percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
+    for perc in pes:
+        if perc[0]: 
+            percs['win'] = int(perc[1])
+        else:
+            percs['lose'] = int(perc[1])
+
+    percs['total'] = percs['win'] + percs['lose']
+    percs['winp'] = int(percs['win'] / percs['total'] * 100)
+    percs['losep'] = int(percs['lose'] / percs['total'] * 100)
+    db.close()
+    return percs
 if __name__ == "__main__":
     app.run(threaded=True, debug=conf.DEBUG)
