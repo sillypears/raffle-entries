@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1> hi, you entered {{ total }} raffles</h1>
+<table class="table bordered hover alternate">
+<thead>
+    <tr>
+        <th>{{ headers[0].name | capitalize }}</th>
+        <th>{{ headers[1].name | capitalize }}</th>
+        <th>{{ headers[3].name | capitalize }}</th>
+        <th>{{ headers[5].name | capitalize }}</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+{% for entry in entries %}
+<tr>
+    <td id="display-{{ entry[6]}}" name="display" class="display" width="25%">{{ entry[0] }}</td>
+    <td id="result-{{ entry[6]}}" name="result" class="result" width="10%">{% if entry[1] == 0 %}L{% else %}W{% endif %}</td>
+    <td id="date-{{ entry[6]}}" name="date" class="date" width="20%">{{ entry[3] }}</td>
+    <td id="link-{{ entry[6]}}" name="link" class="link" width="35%"><a class="href notes" name="notes" id="notes" href="{{ entry[5] }}">{{ entry[4] }}</a></td>
+    <td id="button-{{ entry[6]}}" name="button" class="button" width="5%"><button class="btn-secondary" onclick="toggleResult({{ entry[6] }}, {{ 1 if entry[1] else 0 }})">Result</button></td>
+    <td id="button-{{ entry[6]}}" name="button" class="button" width="5%"><button class="btn-warning" onclick="toggleResult({{ entry[6] }})">Edit</button></td>
+
+  {% for e in entry %}
+
+  {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

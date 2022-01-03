@@ -1,0 +1,96 @@
+from flask import Flask, render_template, request, jsonify, redirect
+from pprint import pprint
+from datetime import datetime
+
+import db.db as database
+from config.config import app_config
+conf = app_config['dev']
+
+app = Flask(__name__, static_folder='static')
+
+
+@app.route("/", methods=["GET"])
+def index():
+    db = database.get_db(conf)
+    e = database.get_entries(db, conf)
+    entries = e.fetchall()
+    db.close()
+    return render_template("index.html", entries=entries, headers=e.description, total=len(entries))
+
+
+@app.route("/add/maker", methods=["GET", "POST"])
+def add_maker():
+    if request.method == 'POST':
+        f = request.form
+        try:
+            name = f['name']
+            display = f['display']
+        except:
+            print('stop failing')
+            return redirect("/")
+        db = database.get_db(conf)
+        entry = database.add_maker(db, {'name': name, 'display': display}, conf)
+        print(entry.fetchall())
+        db.close()
+        return redirect("/")
+    else:
+        return render_template("add-maker.html")
+
+
+@app.route("/add/entry", methods=["GET", "POST"])
+def add_entry():
+    if request.method == 'POST':
+        f = request.form
+        try:
+            maker = f['maker']
+            link = f['link']
+            notes = f['notes']
+            y, m, d = f['date'].split("-")
+            date = datetime(int(y), int(m), int(d))
+            epoch = int(date.timestamp())
+        except:
+            pass
+        try:
+            result = True if f['result'] == 'on' else False
+        except:
+            result = False
+        db = database.get_db(conf)
+        entry = database.add_entry(db, {'maker_id': maker, 'link': link,
+                                        'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)                                      
+        db.close()
+        return redirect("/")
+    else:
+        db = database.get_db(conf)
+        makers = database.get_makers(db, conf).fetchall()
+        db.close()
+        return render_template("add-entry.html", makers=makers)
+
+@app.route("/edit/entry", methods=["GET", "POST"])
+def edit_entry():
+    db = database.get_db(conf)
+    entry = db.get_entry(request.form['id'])
+    return render_template("edit-entry.html", entry=entry)
+
+@app.route("/edit/maker", methods=["GET", "POST"])
+def edit_maker():
+    db = database.get_db(conf)
+    maker = db.get_maker(request.form['id'])
+    return render_template("edit-maker.html", maker=maker)
+
+@app.route("/toggle-result", methods=["POST"])
+def toggle_result():
+    try:
+        id = request.form['id']
+        result = int(request.form['result'])
+    except:
+        return {'success': 'FAIL', 'id': -1, 'result': False}
+    db = database.get_db(conf)
+    toggle = database.toggle_entry(db, {'id': id, 'result': result}, conf)
+    toggle = toggle.fetchall()
+    print(toggle)
+    db.close()
+    return {'success': 'OK', 'message': toggle, 'id': id, 'result': result}
+
+
+if __name__ == "__main__":
+    app.run(threaded=True, debug=conf.DEBUG)
