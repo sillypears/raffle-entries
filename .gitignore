@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 config/config.py
+db.sqlite
