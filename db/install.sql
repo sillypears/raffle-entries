@@ -65,3 +65,24 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.entries
     OWNER to postgres;
+
+-- View: public.all_entries
+
+-- DROP VIEW public.all_entries;
+
+CREATE OR REPLACE VIEW public.all_entries
+ AS
+ SELECT m.display AS maker,
+    e.result,
+    e.epoch,
+    e.date,
+    e.notes,
+    e.raffle_link AS info,
+    e.id,
+    m.id AS "maker id"
+   FROM entries e
+     LEFT JOIN makers m ON e.maker_id = m.id;
+
+ALTER TABLE public.all_entries
+    OWNER TO postgres;
+
