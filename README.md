@@ -1,3 +1,3 @@
 lol
 
-![A Dumb Example](/docs/example.png)
+![A Dumb Example](/docs/win.gif)
