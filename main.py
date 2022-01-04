@@ -2,10 +2,20 @@ from flask import Flask, render_template, request, jsonify, redirect
 import math
 from pprint import pprint
 from datetime import datetime
-
+import os
 import db.db as database
-from config.config import app_config
-conf = app_config['dev']
+from urllib.parse import urlparse
+
+url = urlparse(os.environ.get('DATABASE_URL'))
+class Config(object):
+    DEBUG = False
+    DATABASE_HOST = url.hostname
+    DATABASE_PORT = url.port
+    DATABASE_USER = url.username
+    DATABASE_PASS = url.password
+    DATABASE_SCHEMA = url.path[1:]
+
+conf = Config
 
 app = Flask(__name__, static_folder='static')
 
