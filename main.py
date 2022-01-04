@@ -111,21 +111,24 @@ def toggle_result():
 
 
 def get_percs():
-    db = database.get_db(conf)
+    try:
+        db = database.get_db(conf)
 
-    p = database.get_percents(db, conf)
-    pes = p.fetchall()
-    percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
-    for perc in pes:
-        if perc[0]: 
-            percs['win'] = int(perc[1])
-        else:
-            percs['lose'] = int(perc[1])
+        p = database.get_percents(db, conf)
+        pes = p.fetchall()
+        percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
+        for perc in pes:
+            if perc[0]: 
+                percs['win'] = int(perc[1])
+            else:
+                percs['lose'] = int(perc[1])
 
-    percs['total'] = percs['win'] + percs['lose']
-    percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
-    percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
-    db.close()
-    return percs
+        percs['total'] = percs['win'] + percs['lose']
+        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
+        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        db.close()
+        return percs
+    except:
+        return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
 if __name__ == "__main__":
     app.run(threaded=True, debug=conf.DEBUG)
