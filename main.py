@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect
+import math
 from pprint import pprint
 from datetime import datetime
 
@@ -8,15 +9,13 @@ conf = app_config['dev']
 
 app = Flask(__name__, static_folder='static')
 
-
 @app.route("/", methods=["GET"])
 def index():
     db = database.get_db(conf)
     e = database.get_entries(db, conf)
     entries = e.fetchall()
-    percs = get_percs()
     db.close()
-    return render_template("index.html", entries=entries, headers=e.description, percs=percs, total=len(entries))
+    return render_template("index.html", percs=get_percs(), entries=entries, headers=e.description, total=len(entries))
 
 
 @app.route("/add/maker", methods=["GET", "POST"])
@@ -32,11 +31,10 @@ def add_maker():
         db = database.get_db(conf)
         entry = database.add_maker(
             db, {'name': name, 'display': display}, conf)
-        print(entry.fetchall())
         db.close()
         return redirect("/")
     else:
-        return render_template("add-maker.html")
+        return render_template("add-maker.html", percs=get_percs())
 
 
 @app.route("/add/entry", methods=["GET", "POST"])
@@ -65,21 +63,26 @@ def add_entry():
         db = database.get_db(conf)
         makers = database.get_makers(db, conf).fetchall()
         db.close()
-        return render_template("add-entry.html", makers=makers)
+        return render_template("add-entry.html", percs=get_percs(), makers=makers)
 
 
-@app.route("/edit/entry", methods=["GET", "POST"])
-def edit_entry():
-    db = database.get_db(conf)
-    entry = db.get_entry(request.form['id'])
-    return render_template("edit-entry.html", entry=entry)
+@app.route("/edit/entry/<id>", methods=["GET", "POST"])
+def edit_entry(id):
+    if request.method == "GET":
+        db = database.get_db(conf)
+        entry = database.get_entry(db, id, conf).fetchall()[0]
+        makers = database.get_makers(db, conf).fetchall()
+        db.close()
+        return render_template("edit-entry.html",  percs=get_percs(),  entry=entry, makers=makers)
+    elif request.method == "POST":
+        return index()
 
 
 @app.route("/edit/maker", methods=["GET", "POST"])
 def edit_maker():
     db = database.get_db(conf)
     maker = db.get_maker(request.form['id'])
-    return render_template("edit-maker.html", maker=maker)
+    return render_template("edit-maker.html", percs=get_percs(), maker=maker)
 
 
 @app.route("/toggle-result", methods=["POST"])
@@ -110,8 +113,8 @@ def get_percs():
             percs['lose'] = int(perc[1])
 
     percs['total'] = percs['win'] + percs['lose']
-    percs['winp'] = int(percs['win'] / percs['total'] * 100)
-    percs['losep'] = int(percs['lose'] / percs['total'] * 100)
+    percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
+    percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
     db.close()
     return percs
 if __name__ == "__main__":

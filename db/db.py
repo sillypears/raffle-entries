@@ -30,7 +30,7 @@ def get_maker(db, id, conf):
 
 def get_entries(db, conf):
     cur = db.cursor()
-    cur.execute("SELECT * FROM all_entries ORDER BY epoch, id ASC")
+    cur.execute("SELECT * FROM all_entries ORDER BY epoch, id   ")
     return cur
 
 def get_entry(db, id, conf):
