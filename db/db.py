@@ -20,7 +20,7 @@ def close_db(db, conf):
 
 def get_makers(db, conf):
     cur = db.cursor()
-    cur.execute("SELECT id, name, display FROM makers")
+    cur.execute("SELECT id, name, display FROM makers ORDER BY name ASC")
     return cur
 
 def get_maker(db, id, conf):
@@ -30,7 +30,7 @@ def get_maker(db, id, conf):
 
 def get_entries(db, conf):
     cur = db.cursor()
-    cur.execute("SELECT * FROM all_entries ORDER BY epoch, id   ")
+    cur.execute("SELECT * FROM all_entries ORDER BY epoch, id ")
     return cur
 
 def get_entry(db, id, conf):

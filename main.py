@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 url = urlparse(os.environ.get('DATABASE_URL'))
 class Config(object):
-    DEBUG = False
+    DEBUG = os.environ.get('FLASK_DEBUG')
     DATABASE_HOST = url.hostname
     DATABASE_PORT = url.port
     DATABASE_USER = url.username
@@ -73,7 +73,7 @@ def add_entry():
         db = database.get_db(conf)
         makers = database.get_makers(db, conf).fetchall()
         db.close()
-        return render_template("add-entry.html", percs=get_percs(), makers=makers)
+        return render_template("add-entry.html", percs=get_percs(), todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
 
 
 @app.route("/edit/entry/<id>", methods=["GET", "POST"])
@@ -93,7 +93,6 @@ def edit_maker():
     db = database.get_db(conf)
     maker = db.get_maker(request.form['id'])
     return render_template("edit-maker.html", percs=get_percs(), maker=maker)
-
 
 @app.route("/toggle-result", methods=["POST"])
 def toggle_result():
