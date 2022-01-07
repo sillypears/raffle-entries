@@ -1,5 +1,6 @@
 from flask import g
 import psycopg2
+from datetime import datetime
 
 def get_db(conf):
     db = psycopg2.connect(
@@ -42,11 +43,22 @@ def add_entry(db, data, conf):
     cur = db.cursor()
     cur.execute(f"INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link']}', '{data['notes']}', {data['result']}) RETURNING id")
     return cur
+def update_entry(db, id, data, conf):
+    try:
+        result = True if data['result'] == 'on' else True
+    except:
+        result = False
+    cur = db.cursor()
+    print(f"UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link']}', notes='{data['notes']}', result={result} WHERE id={id}")
+
+    cur.execute(f"UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link']}', notes='{data['notes']}', result={result} WHERE id={id}")
+    return cur
 
 def add_maker(db, data, conf):
     cur = db.cursor()
     cur.execute(f"INSERT INTO makers (name, display) VALUES ('{data['name']}', '{data['display']}') RETURNING id")
     return cur
+
 
 def toggle_entry(db, data, conf):
     result = False if data['result'] else True

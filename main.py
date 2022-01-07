@@ -85,10 +85,13 @@ def edit_entry(id):
         db.close()
         return render_template("edit-entry.html",  percs=get_percs(),  entry=entry, makers=makers)
     elif request.method == "POST":
+        db = database.get_db(conf)
+        update = database.update_entry(db, id, request.form, conf)
+        print(update)
         return index()
 
 
-@app.route("/edit/maker", methods=["GET", "POST"])
+@app.route("/edit/maker/<id>", methods=["GET", "POST"])
 def edit_maker():
     db = database.get_db(conf)
     maker = db.get_maker(request.form['id'])
