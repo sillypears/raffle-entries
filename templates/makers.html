@@ -2,6 +2,7 @@
 {% block content %}
 
 <div class="container">
+    <h1 class="h1">You like {{ total }} maker{% if total != 1 %}s{%endif%}</h1>
     <div class="row">
     {% for maker in makers %}
         <div class="col-3">

@@ -80,7 +80,7 @@ def makers():
 
     pprint(makers)
     db.close()
-    return render_template("makers.html", percs=get_percs(), makers=makers)
+    return render_template("makers.html", percs=get_percs(), makers=makers, total=len(makers))
 
 
 @app.route("/maker/<id>", methods=["GET"])
