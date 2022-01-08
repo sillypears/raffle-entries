@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-header d-flex align-items-center ">
+            <div class="d-md-flex flex-md-row flex-column"><a href="/maker/{{entry[7]}}">{{ entry[0] }}</a></div>
+            <div class="d-md-flex flex-md-row flex-column ms-auto">{{ entry[3] }}</div>
+        </div>
+        <div class="card-body">
+            <div class="text-center">
+                {{ entry[4] }}
+            </div>
+            <div class="text-center">
+                <a href="{{ entry[5]}}" target="_blank">{{entry[5]}}</a>
+            </div>
+        </div>
+        <div class="card-footer {{ 'result-green' if entry[1] else 'result-red'  }}">
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+<!-- (Column(name='maker', type_code=1043), Column(name='result', type_code=16), Column(name='epoch', type_code=23), Column(name='date', type_code=1082), Column(name='notes', type_code=25), Column(name='info', type_code=1043), Column(name='id', type_code=23), Column(name='mid', type_code=23), Column(name='shortname', type_code=1043)) -->
+<!-- ('Nightcaps', True, 1641013200, datetime.date(2022, 1, 1), 'Entered for 5, want 57 types', 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSeKzN9DhHyE2ynSAuTFM74uUI4SMwMI60HD5SvazvBS7jKxXg/formResponse', 9, 1, 'nightcaps') -->

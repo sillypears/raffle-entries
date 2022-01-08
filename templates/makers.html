@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+    {% for maker in makers %}
+        <div class="col-3">
+            <div class="card makers-card my-4">
+                <div class="card-header d-flex align-items-center ">
+                    <a href="/maker/{{ makers[maker]['mid']}}">{{ makers[maker]['display'] }}</a>
+                </div>
+                <div class="card-body">
+                    <div class="">Wins: {{ '{0:0.2f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}%</div>
+                    <div class="">Losses: {{ '{0:0.2f}'.format(makers[maker]['lose'] / makers[maker]['total'] * 100) }}%
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar"
+                            style="width: {{ '{0:0.0f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}%;"
+                            aria-valuenow="{{ '{0:0.0f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}"
+                            aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% if loop.index % 4 == 0 %} 
+    </div>
+    <div class="row">
+    {% endif %}
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -31,7 +31,12 @@ def get_maker(db, id, conf):
 
 def get_entries(db, conf):
     cur = db.cursor()
-    cur.execute("SELECT * FROM all_entries ORDER BY epoch, id ")
+    cur.execute("SELECT * FROM all_entries ORDER BY epoch DESC, id ASC")
+    return cur
+
+def get_entries_by_maker(db, id, conf):
+    cur = db.cursor()
+    cur.execute(f"SELECT * FROM all_entries WHERE mid = {id} ORDER BY epoch, id ")
     return cur
 
 def get_entry(db, id, conf):
@@ -43,6 +48,7 @@ def add_entry(db, data, conf):
     cur = db.cursor()
     cur.execute(f"INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link']}', '{data['notes']}', {data['result']}) RETURNING id")
     return cur
+
 def update_entry(db, id, data, conf):
     try:
         result = True if data['result'] == 'on' else True
@@ -70,4 +76,9 @@ def toggle_entry(db, data, conf):
 def get_percents(db, conf):
     cur = db.cursor()
     cur.execute(f"SELECT result, COUNT(result) FROM entries GROUP BY result")
+    return cur
+
+def get_percent_by_id(db, id, conf):
+    cur = db.cursor()
+    cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {id} GROUP BY m.name,e.result, m.display, m.id")
     return cur

@@ -18,7 +18,7 @@
         <tbody>
             {% for entry in entries %}
             <tr>
-                <td id="date-{{ entry[6]}}" name="date" class="date" width="10%">{{ entry[3] }}</td>
+                <td id="date-{{ entry[6]}}" name="date" class="date" width="10%"><a href="/entry/{{entry[6]}}">{{ entry[3] }}</a></td>
 
                 <td id="display-{{ entry[6]}}" name="display" class="display" width="25%">{{ entry[0] }}</td>
                 <td id="result-{{ entry[6]}}" name="result" class="result" width="10%">{% if entry[1] == 0 %}L{% else

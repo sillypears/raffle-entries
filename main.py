@@ -5,8 +5,11 @@ from datetime import datetime
 import os
 import db.db as database
 from urllib.parse import urlparse
+import json
 
 url = urlparse(os.environ.get('DATABASE_URL'))
+
+
 class Config(object):
     DEBUG = os.environ.get('FLASK_DEBUG')
     DATABASE_HOST = url.hostname
@@ -15,9 +18,11 @@ class Config(object):
     DATABASE_PASS = url.password
     DATABASE_SCHEMA = url.path[1:]
 
+
 conf = Config
 
 app = Flask(__name__, static_folder='static')
+
 
 @app.route("/", methods=["GET"])
 def index():
@@ -26,6 +31,64 @@ def index():
     entries = e.fetchall()
     db.close()
     return render_template("index.html", percs=get_percs(), entries=entries, headers=e.description, total=len(entries))
+
+
+@app.route("/entry/<id>", methods=["GET"])
+def get_entry_by_id(id):
+    db = database.get_db(conf)
+    entry = database.get_entry(db, id, conf).fetchall()[0]
+    db.close()
+    return render_template("entry.html", percs=get_percs(), entry=entry)
+
+
+@app.route("/makers", methods=["GET"])
+def makers():
+    makers = {}
+    db = database.get_db(conf)
+    ms = database.get_makers(db, conf).fetchall()
+    for maker in ms:
+        mpercs = database.get_percent_by_id(db, maker[0], conf).fetchall()
+        for perc in mpercs:
+            if perc[0] in makers.keys() and len(perc) > 0:
+                if perc[2]:
+                    makers[perc[0]]['win'] += perc[3]
+                    makers[perc[0]]['total'] += perc[3]
+
+                else:
+                    makers[perc[0]]['lose'] += perc[3]
+                    makers[perc[0]]['total'] += perc[3]
+
+            elif len(perc) > 0:
+                if perc[2]:
+                    makers[perc[0]] = {}
+                    makers[perc[0]]['win'] = perc[3]
+                    makers[perc[0]]['lose'] = 0
+                    makers[perc[0]]['total'] = perc[3]
+                    makers[perc[0]]['display'] = perc[1]
+                    makers[perc[0]]['mid'] = perc[4]
+
+                else:
+                    makers[perc[0]] = {}
+                    makers[perc[0]]['lose'] = perc[3]
+                    makers[perc[0]]['win'] = 0
+                    makers[perc[0]]['display'] = perc[1]
+                    makers[perc[0]]['total'] = perc[3]
+                    makers[perc[0]]['mid'] = perc[4]
+
+
+
+
+    pprint(makers)
+    db.close()
+    return render_template("makers.html", percs=get_percs(), makers=makers)
+
+
+@app.route("/maker/<id>", methods=["GET"])
+def get_maker_by_id(id):
+    db = database.get_db(conf)
+    maker = database.get_entries_by_maker(db, id, conf).fetchall()
+    db.close()
+    return render_template("maker.html", percs=get_percs(), maker=maker)
 
 
 @app.route("/add/maker", methods=["GET", "POST"])
@@ -97,6 +160,7 @@ def edit_maker():
     maker = db.get_maker(request.form['id'])
     return render_template("edit-maker.html", percs=get_percs(), maker=maker)
 
+
 @app.route("/toggle-result", methods=["POST"])
 def toggle_result():
     try:
@@ -112,15 +176,30 @@ def toggle_result():
     return {'success': 'OK', 'message': toggle, 'id': id, 'result': result}
 
 
+@app.route("/api/getEntriesByMaker", methods=["GET"])
+def get_entries_by_maker():
+    db = database.get_db(conf)
+    e = database.get_entries(db, conf)
+    es = e.fetchall()
+    entries = {}
+    print(e.description)
+    for entry in es:
+        if entry[-1] in entries.keys():
+            entries[entry[-1]].append(entry)
+        else:
+            entries[entry[-1]] = [entry]
+
+    return {'status': 'OK', 'data': entries}
+
+
 def get_percs():
     try:
         db = database.get_db(conf)
-
         p = database.get_percents(db, conf)
         pes = p.fetchall()
         percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
         for perc in pes:
-            if perc[0]: 
+            if perc[0]:
                 percs['win'] = int(perc[1])
             else:
                 percs['lose'] = int(perc[1])
@@ -132,5 +211,28 @@ def get_percs():
         return percs
     except:
         return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
+
+
+def get_percs_by_id(id):
+    try:
+        db = database.get_db(conf)
+        p = database.get_percents(db, id, conf)
+        pes = p.fetchall()
+        percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
+        for perc in pes:
+            if perc[0]:
+                percs['win'] = int(perc[1])
+            else:
+                percs['lose'] = int(perc[1])
+
+        percs['total'] = percs['win'] + percs['lose']
+        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
+        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        db.close()
+        return percs
+    except:
+        return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
+
+
 if __name__ == "__main__":
     app.run(threaded=True, debug=conf.DEBUG)
