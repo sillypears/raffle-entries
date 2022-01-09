@@ -12,4 +12,7 @@ Now you need env variables instead of the config file :)
    1) development/production
 
 # If using something like AWS or Heroku
+Setting up [Postgres on Heroku](https://devcenter.heroku.com/articles/heroku-postgresql).
+
 ![A bad example](/docs/config_vars_heroku.png)
+
