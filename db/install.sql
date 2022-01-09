@@ -1,8 +1,3 @@
-
--- Database: postgres
-
--- DROP DATABASE IF EXISTS raffle_entries;
-
 CREATE DATABASE raffle_entries
     WITH 
     OWNER = postgres
@@ -13,10 +8,6 @@ CREATE DATABASE raffle_entries
     CONNECTION LIMIT = -1;
 
 GRANT ALL ON DATABASE raffle_entries TO pg_database_owner;
--- Table: public.makers
-
--- DROP TABLE IF EXISTS public.makers;
-
 
 CREATE TABLE IF NOT EXISTS public.makers
 (
@@ -29,9 +20,6 @@ CREATE TABLE IF NOT EXISTS public.makers
 TABLESPACE pg_default;
 
 
--- Table: public.entries
-
--- DROP TABLE IF EXISTS public.entries;
 CREATE TABLE IF NOT EXISTS public.entries
 (
     id serial NOT NULL,
@@ -50,13 +38,6 @@ CREATE TABLE IF NOT EXISTS public.entries
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.entries
-    OWNER to postgres;
-
--- View: public.all_entries
-
--- DROP VIEW public.all_entries;
-
 CREATE OR REPLACE VIEW public.all_entries
  AS
  SELECT m.display AS maker,
@@ -70,6 +51,4 @@ CREATE OR REPLACE VIEW public.all_entries
    FROM entries e
      LEFT JOIN makers m ON e.maker_id = m.id;
 
-ALTER TABLE public.all_entries
-    OWNER TO postgres;
 

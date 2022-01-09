@@ -235,4 +235,11 @@ def get_percs_by_id(id):
 
 
 if __name__ == "__main__":
+    try:
+        db = database.get_db(conf)
+        db.close()
+    except:
+        print("Database connection failed, setting up new DB")
+        import db.build_db
+        db.build_db.main(conf)
     app.run(threaded=True, debug=conf.DEBUG)
