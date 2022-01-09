@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    <h1 class="h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total != 1 %}s{% endif %}</h1>
+    <h1 class="h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total != 1 %}s{% endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
 
     <table class="table bordered table-striped table-hover">
         <thead>
