@@ -66,7 +66,7 @@ def add_maker(db, data, conf):
 
 def update_maker(db, id, data, conf):
     cur = db.cursor()
-    cur.execute(f"""UPDATE makers SET name={data['name']}, display={(data['display'])}, instagram='{data['instagram']}' WHERE id={id}""")
+    cur.execute(f"""UPDATE makers SET name='{data['name']}', display='{(data['display'])}', instagram='{data['instagram']}' WHERE id={id}""")
     return cur
 
 def toggle_entry(db, data, conf):

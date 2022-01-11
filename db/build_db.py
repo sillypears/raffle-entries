@@ -13,6 +13,7 @@ def main(conf):
         id serial NOT NULL,
         name character varying(50) COLLATE pg_catalog."default" NOT NULL,
         display character varying(200) COLLATE pg_catalog."default" NOT NULL,
+        instagram character varying(200) COLLATE pg_catalog."default",
         CONSTRAINT makers_pkey PRIMARY KEY (id)
     )"""
 
@@ -41,7 +42,8 @@ def main(conf):
         e.notes,
         e.raffle_link AS info,
         e.id,
-        m.id AS "maker id"
+        m.id AS "maker id",
+        m.instagram
     FROM entries e
         LEFT JOIN makers m ON e.maker_id = m.id;"""
 

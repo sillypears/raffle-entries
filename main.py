@@ -155,11 +155,15 @@ def edit_entry(id):
 
 
 @app.route("/edit/maker/<id>", methods=["GET", "POST"])
-def edit_maker():
-    db = database.get_db(conf)
-    maker = db.get_maker(request.form['id'])
-    return render_template("edit-maker.html", percs=get_percs(), maker=maker)
-
+def edit_maker(id):
+    if request.method == "GET":
+        db = database.get_db(conf)
+        maker = database.get_maker(db, id, conf).fetchall()[0]
+        return render_template("edit-maker.html", percs=get_percs(), maker=maker)
+    elif request.method == "POST":
+        db = database.get_db(conf)
+        update = database.update_maker(db, id, request.form, conf)
+        return index()
 
 @app.route("/toggle-result", methods=["POST"])
 def toggle_result():
