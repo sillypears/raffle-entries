@@ -1,6 +1,7 @@
 from flask import g
 import psycopg2
 from datetime import datetime
+import re, json
 
 def get_db(conf):
     db = psycopg2.connect(
@@ -21,12 +22,12 @@ def close_db(db, conf):
 
 def get_makers(db, conf):
     cur = db.cursor()
-    cur.execute("SELECT id, name, display FROM makers ORDER BY name ASC")
+    cur.execute("SELECT id, name, display, instagram FROM makers ORDER BY name ASC")
     return cur
 
 def get_maker(db, id, conf):
     cur = db.cursor()
-    cur.execute(f"SELECT id, name, display FROM makers WHERE id = {id}")
+    cur.execute(f"SELECT id, name, display, instagram FROM makers WHERE id = {id}")
     return cur
 
 def get_entries(db, conf):
@@ -46,7 +47,7 @@ def get_entry(db, id, conf):
 
 def add_entry(db, data, conf):
     cur = db.cursor()
-    cur.execute(f"INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link']}', '{data['notes']}', {data['result']}) RETURNING id")
+    cur.execute(f"""INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link'].replace("'","''")}', '{data['notes'].replace("'","''")}', {data['result']}) RETURNING id""")
     return cur
 
 def update_entry(db, id, data, conf):
@@ -55,20 +56,21 @@ def update_entry(db, id, data, conf):
     except:
         result = False
     cur = db.cursor()
-    print(f"UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link']}', notes='{data['notes']}', result={result} WHERE id={id}")
-
-    cur.execute(f"UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link']}', notes='{data['notes']}', result={result} WHERE id={id}")
+    cur.execute(f"""UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link'].replace("'","''")}', notes='{data['notes'].replace("'","''")}', result={result} WHERE id={id}""")
     return cur
 
 def add_maker(db, data, conf):
     cur = db.cursor()
-    cur.execute(f"INSERT INTO makers (name, display) VALUES ('{data['name']}', '{data['display']}') RETURNING id")
+    cur.execute(f"INSERT INTO makers (name, display, instagram) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}) RETURNING id")
     return cur
 
+def update_maker(db, id, data, conf):
+    cur = db.cursor()
+    cur.execute(f"""UPDATE makers SET name={data['name']}, display={(data['display'])}, instagram='{data['instagram']}' WHERE id={id}""")
+    return cur
 
 def toggle_entry(db, data, conf):
     result = False if data['result'] else True
-    print(type(data['result']), data['result'], result)
     cur = db.cursor()
     cur.execute(f"UPDATE entries SET result={result} WHERE id = {data['id']} RETURNING id")
     return cur
