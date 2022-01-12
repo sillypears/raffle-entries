@@ -1,5 +1,5 @@
 lol
-![A Dumb Example](/docs/win.gif)
+![A Dumb Example](/docs/test.gif)
 
 # Changed a bunch of shit
 
