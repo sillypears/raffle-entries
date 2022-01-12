@@ -74,11 +74,6 @@ def makers():
                     makers[perc[0]]['display'] = perc[1]
                     makers[perc[0]]['total'] = perc[3]
                     makers[perc[0]]['mid'] = perc[4]
-
-
-
-
-    pprint(makers)
     db.close()
     return render_template("makers.html", percs=get_percs(), makers=makers, total=len(makers))
 
