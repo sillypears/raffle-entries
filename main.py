@@ -93,12 +93,13 @@ def add_maker():
         try:
             name = f['name']
             display = f['display']
+            instagram = f['instagram']
         except:
             print('stop failing')
             return redirect("/")
         db = database.get_db(conf)
         entry = database.add_maker(
-            db, {'name': name, 'display': display}, conf)
+            db, {'name': name, 'display': display, 'instagram': instagram}, conf)
         db.close()
         return redirect("/")
     else:

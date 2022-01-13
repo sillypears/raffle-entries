@@ -61,7 +61,7 @@ def update_entry(db, id, data, conf):
 
 def add_maker(db, data, conf):
     cur = db.cursor()
-    cur.execute(f"INSERT INTO makers (name, display, instagram) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}) RETURNING id")
+    cur.execute(f"INSERT INTO makers (name, display, instagram) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}') RETURNING id")
     return cur
 
 def update_maker(db, id, data, conf):
