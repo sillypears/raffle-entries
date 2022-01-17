@@ -9,6 +9,20 @@
 .makers-card {
     width: 18rem;
 }
+
+.spoiler-text {
+    color: transparent;
+    cursor: grab;
+    user-select: none;
+    transition: background 0.3s ease 0.2s, color 0.2s ease 0.25s;
+}
+
+.spoiler-text:hover,
+.spoiler-text:focus {
+    background: #e8e8e8;
+    color: inherit;
+}
+
 @media (min-width: 34em) {
     .maker-card-columns {
         -webkit-column-count: 2;

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import math
 from pprint import pprint
 from datetime import datetime
@@ -101,7 +101,7 @@ def add_maker():
         entry = database.add_maker(
             db, {'name': name, 'display': display, 'instagram': instagram}, conf)
         db.close()
-        return redirect("/")
+        return redirect(url_for('index'))
     else:
         return render_template("add-maker.html", percs=get_percs())
 
@@ -127,7 +127,7 @@ def add_entry():
         entry = database.add_entry(db, {'maker_id': maker, 'link': link,
                                         'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)
         db.close()
-        return redirect("/")
+        return redirect(url_for('index'))
     else:
         db = database.get_db(conf)
         makers = database.get_makers(db, conf).fetchall()
@@ -146,8 +146,8 @@ def edit_entry(id):
     elif request.method == "POST":
         db = database.get_db(conf)
         update = database.update_entry(db, id, request.form, conf)
-        print(update)
-        return index()
+        db.close()
+        return redirect(url_for('index'))
 
 
 @app.route("/edit/maker/<id>", methods=["GET", "POST"])
@@ -155,11 +155,28 @@ def edit_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
         maker = database.get_maker(db, id, conf).fetchall()[0]
+        db.close()
         return render_template("edit-maker.html", percs=get_percs(), maker=maker)
     elif request.method == "POST":
         db = database.get_db(conf)
         update = database.update_maker(db, id, request.form, conf)
-        return index()
+        db.close()
+        return redirect(url_for('index'))
+
+@app.route("/del-maker", methods=["GET", "POST"])
+def del_makers():
+    if request.method == "GET":
+        db = database.get_db(conf)
+        makers = database.get_makers(db, conf).fetchall()
+        db.close()
+        return render_template('del-maker.html', percs=get_percs(), makers=makers)
+    elif request.method == "POST":
+        db = database.get_db(conf)
+        for deletee in request.form.getlist('del-maker'):
+            print(f"deleting {deletee}")
+            deleted = database.del_maker(db, int(deletee), conf)
+        db.close()
+        return redirect(url_for('index'))
 
 @app.route("/toggle-result", methods=["POST"])
 def toggle_result():
@@ -188,7 +205,7 @@ def get_entries_by_maker():
             entries[entry[-1]].append(entry)
         else:
             entries[entry[-1]] = [entry]
-
+    db.close() 
     return {'status': 'OK', 'data': entries}
 
 

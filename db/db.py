@@ -84,3 +84,9 @@ def get_percent_by_id(db, id, conf):
     cur = db.cursor()
     cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {id} GROUP BY m.name,e.result, m.display, m.id")
     return cur
+
+def del_maker(db, id, conf):
+    cur = db.cursor()
+    cur.execute(f"DELETE FROM makers WHERE id = {id}")
+    print(dir(cur))
+    return cur

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="">
+        <form action="" method="POST">
+                <select id="del-maker" name="del-maker" class="select form-control" multiple size={{ makers | length +1 }}>
+                    <option value=-1 name="maker-default" selected>Maker</option>
+
+                    {% for m in makers %}
+                    <option value={{ m[0] }} name="maker-{{ m[1] }}">{{ m[2] }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button type="submit" class="btn-success">Delete Maker</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
