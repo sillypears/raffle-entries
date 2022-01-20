@@ -45,7 +45,7 @@ def get_entry_by_id(id):
 def makers():
     makers = {}
     db = database.get_db(conf)
-    ms = database.get_makers(db, conf).fetchall()
+    ms = database.get_makers_raffles(db, conf).fetchall()
     for maker in ms:
         mpercs = database.get_percent_by_id(db, maker[0], conf).fetchall()
         for perc in mpercs:

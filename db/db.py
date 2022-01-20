@@ -25,6 +25,11 @@ def get_makers(db, conf):
     cur.execute("SELECT id, name, display, instagram FROM makers ORDER BY name ASC")
     return cur
 
+def get_makers_raffles(db, conf):
+    cur = db.cursor()
+    cur.execute("SELECT m.id, m.name, m.display, m.instagram, count(e.id) FROM makers m LEFT JOIN entries e ON e.maker_id = m.id GROUP BY m.id HAVING COUNT(e.id) > 0 ORDER BY m.name ASC")
+    return cur
+
 def get_maker(db, id, conf):
     cur = db.cursor()
     cur.execute(f"SELECT id, name, display, instagram FROM makers WHERE id = {id}")
