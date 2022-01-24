@@ -12,9 +12,9 @@
 </head>
 
 <body>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+    <nav class="nav fixed-top navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">💋</a>
-        <button class="navbar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -72,7 +72,7 @@
             <span class="">
                 L: <span id="lose-perc-navbar">{{ percs.losep }}</span>%
             </span>
-            <span>
+        </span>
     </nav>
     {% block content %}
     {% endblock %}
@@ -87,7 +87,7 @@
         integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    <footer class="footer">
+    <footer class="footer fixed-bottom">
         <a href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
     </footer>
 </body>
