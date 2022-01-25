@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container-fluid">
+<div class="mt-4 pt-4 container-fluid">
     <div class="row">
         <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total != 1 %}s{%
             endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
