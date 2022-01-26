@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container">
+<div class="mt-4 pt-4 container">
     <h1 class="h1">You like {{ total }} maker{% if total != 1 %}s{%endif%}</h1>
     <div class="row">
     {% for maker in makers %}
