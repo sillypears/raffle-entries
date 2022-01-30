@@ -18,9 +18,9 @@
                         <div class="row">
                             <span class="col-md-10 font-weight-bold h5">{{ entry[0] }}</span>
                             {% if entry[1] %}
-                            <span class="result-green rounded col-md-2 font-weight-bold p-1 text-center">W</span>
+                            <span id="result-{{ entry[6]}}" name="result" class="result result-green rounded col-md-2 font-weight-bold p-1 text-center">W</span>
                             {% else %}
-                            <span class="result-red rounded col-md-2 font-weight-bold p-1 text-center">L</span>
+                            <span id="result-{{ entry[6]}}" name="result" class="result result-red rounded col-md-2 font-weight-bold p-1 text-center">L</span>
                             {% endif %}
                         </div>
                     </div>
