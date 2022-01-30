@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_api import status
 import math
 from pprint import pprint
 from datetime import datetime
@@ -156,10 +157,20 @@ def edit_maker(id):
         db = database.get_db(conf)
         maker = database.get_maker(db, id, conf).fetchall()[0]
         db.close()
-        return render_template("edit-maker.html", percs=get_percs(), maker=maker)
+        return render_template("edit-maker.html", percs=get_percs(), e_id=id, maker=maker)
     elif request.method == "POST":
         db = database.get_db(conf)
         update = database.update_maker(db, id, request.form, conf)
+        db.close()
+        return redirect(url_for('index'))
+
+@app.route("/delete/entry/<id>", methods=["GET", "POST"])
+def del_entry(id):
+    if request.method == "GET":
+        return render_template("del-entry.html", percs=get_percs(), id=id )
+    if request.method == "POST":
+        db = database.get_db(conf) 
+        del_id = database.del_entry(db, id, conf)
         db.close()
         return redirect(url_for('index'))
 
@@ -178,19 +189,19 @@ def del_makers():
         db.close()
         return redirect(url_for('index'))
 
-@app.route("/toggle-result", methods=["POST"])
+@app.route("/toggle-result", methods=["PUT"])
 def toggle_result():
     try:
         id = request.form['id']
         result = int(request.form['result'])
     except:
-        return {'success': 'FAIL', 'id': -1, 'result': False}
+        return "", status.HTTP_400_BAD_REQUEST
     db = database.get_db(conf)
     toggle = database.toggle_entry(db, {'id': id, 'result': result}, conf)
     toggle = toggle.fetchall()
     print(toggle)
     db.close()
-    return {'success': 'OK', 'message': toggle, 'id': id, 'result': result}
+    return "", status.HTTP_204_NO_CONTENT
 
 
 @app.route("/api/getEntriesByMaker", methods=["GET"])

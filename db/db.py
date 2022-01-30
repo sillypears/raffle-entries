@@ -93,5 +93,9 @@ def get_percent_by_id(db, id, conf):
 def del_maker(db, id, conf):
     cur = db.cursor()
     cur.execute(f"DELETE FROM makers WHERE id = {id}")
-    print(dir(cur))
+    return cur
+
+def del_entry(db, id, conf):
+    cur = db.cursor()
+    cur.execute(f"DELETE FROM entries WHERE id = {id}")
     return cur

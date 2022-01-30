@@ -16,10 +16,18 @@
         <input type="date" id="date" name="date" class="form-control" value="{{entry[3]}}" placeholder="Date" />
         <input type="textarea" id="notes" name="notes" class="form-control" value="{{ entry[4] }}"
             placeholder="Notes" />
-        <label for="result" class="form-check-label">Result</label>
-        <input type="checkbox" id="result" name="result" class="form-check-input" {% if entry[1] %} checked {% endif
-            %} />
-        <button type="submit" class="btn-success">Edit Entry</button>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="result" class="form-check-label">Result</label>
+                <input type="checkbox" id="result" name="result" class="form-check-input" {% if entry[1] %} checked {% endif
+                %} />
+            </div>
+            <div class="col-md-10 text-right">
+                <button type="submit" class="btn btn-success">Edit Entry</button>
+                <a class="btn btn-danger" href="/delete/entry/{{entry[6]}}">Delete Entry</a>
+            </div>
+        </div>
+
     </form>
 </div>
 {% endblock %}

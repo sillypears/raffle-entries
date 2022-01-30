@@ -11,7 +11,7 @@ function toggleResult(id, result) {
     console.log(id, result)
     $.ajax({
         url: "/toggle-result",
-        method: "POST",
+        method: "PUT",
         data: {
             'id': id,
             'result': result
