@@ -6,7 +6,7 @@
         <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total !=
             1 %}s{%
             endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
-        <span class="me-2 col-lg-1 me-auto hidden spoiler-text">{{ percs.win }}/{{ percs.lose }}</span>
+        <span class="me-2 col-lg-1 me-auto hidden spoiler-text"><span id="win-perc-num" name="win-perc-num" class="win-perc-num" >{{ percs.win }}</span>/<span id="lose-perc-num" name="lose-perc-num" class="lose-perc-num">{{ percs.lose }}</span></span>
     </div>
     <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 row-cols-xl-7">
         {% for entry in entries %}
@@ -36,8 +36,9 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col text-center">
-                            <a class="btn btn-secondary"
-                                onclick="toggleResult({{ entry[6] }}, {{ 1 if entry[1] else 0 }})">🐬Result</a>
+                            <a id="flip-result-{{entry[6]}}" class="btn btn-secondary"
+
+                                onclick='toggleResult({{ entry[6] }}, {% if entry[1] == "True" %}1{% else %}0{% endif %})'>🐬Result</a>
                             <a class="btn btn-warning " href="/edit/entry/{{ entry[6] }}">Edit</a>
                         </div>
                     </div>

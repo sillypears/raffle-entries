@@ -196,10 +196,11 @@ def toggle_result():
         result = int(request.form['result'])
     except:
         return "", status.HTTP_400_BAD_REQUEST
+    print(id, result)
     db = database.get_db(conf)
     toggle = database.toggle_entry(db, {'id': id, 'result': result}, conf)
-    toggle = toggle.fetchall()
-    print(toggle)
+    tggle = toggle.fetchall()[0]
+    print(tggle)
     db.close()
     return "", status.HTTP_204_NO_CONTENT
 

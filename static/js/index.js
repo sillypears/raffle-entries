@@ -8,7 +8,6 @@ $(function () {
 })
 
 function toggleResult(id, result) {
-    console.log(id, result)
     $.ajax({
         url: "/toggle-result",
         method: "PUT",
@@ -17,22 +16,35 @@ function toggleResult(id, result) {
             'result': result
         },
         success: function(res) {
-            
+            let tWins = parseInt($('#win-perc-num').text())
+            let tLoses = parseInt($('#lose-perc-num').text())
+            let tTotal = tWins + tLoses
+            console.log(tWins, tLoses, tTotal)
             if ($(`#result-${id}`).text() === "L") {
+                tWins += 1
                 $(`#result-${id}`).text("W").addClass('result-green').removeClass('result-red')
+                $('#win-perc-num').text(tWins)
+                $('#lose-perc-num').text(tLoses-1)
+                console.log($(`#flip-result-${id}`))    
+                $(`#flip-result-${id}`).attr("onclick", "toggleResult(29, 1)")
+                console.log('w')
             } else {
+                tLoses += 1
                 $(`#result-${id}`).text("L").removeClass('result-green').addClass('result-red')
+                $('#lose-perc-num').text(tLoses)
+                $('#win-perc-num').text(tWins-1)
+                $(`#flip-result-${id}`).attr("onclick", "toggleResult(29, 0)")
+                console.log('l')
             }
-            const results = $('.result')
-            let wResults = lResults = tResults = 0
-            for (result of results) {
-                if (result.textContent == "W") { wResults += 1}
-                if (result.textContent =="L") { lResults += 1}
-                tResults += 1
-            }
-            $('span#win-perc-navbar')[0].textContent = (wResults /tResults * 100).toFixed()
-            $('span#lose-perc-navbar')[0].textContent = (lResults /tResults * 100).toFixed()
-
+            $('span#win-perc-navbar')[0].textContent = (tWins /tTotal * 100).toFixed()
+            $('span#lose-perc-navbar')[0].textContent = (tLoses/tTotal * 100).toFixed()
+        },
+        error: function(res, stat, err) {
+            console.log(`error: ${err}`)
+        },
+        complete: function() {
+            console.log("it's over")
         }
+
     })
 }
