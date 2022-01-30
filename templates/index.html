@@ -3,11 +3,55 @@
 
 <div class="mt-4 pt-4 container-fluid">
     <div class="row">
-        <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total != 1 %}s{%
+        <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total !=
+            1 %}s{%
             endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
         <span class="me-2 col-lg-1 me-auto hidden spoiler-text">{{ percs.win }}/{{ percs.lose }}</span>
     </div>
-    <table class="table bordered table-striped">
+    <div class="row row-cols-3 row-cols-sm-4 row-cols-md-5 row-cols-lg-6 row-cols-xl-7">
+        {% for entry in entries %}
+        <div class="col my-1 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <div class="card-title">
+                        <div class="row">
+                            <span class="col-md-10 font-weight-bold h5">{{ entry[0] }}</span>
+                            {% if entry[1] %}
+                            <span class="result-green rounded col-md-2 font-weight-bold p-1 text-center">W</span>
+                            {% else %}
+                            <span class="result-red rounded col-md-2 font-weight-bold p-1 text-center">L</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-text ">
+                        <div class="text-right muted small">
+                            {{ entry[3] }}
+                        </div>
+                        <div class=" fs-6">
+                            {{ entry[4] }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col text-center">
+                            <a class="btn btn-secondary"
+                                onclick="toggleResult({{ entry[6] }}, {{ 1 if entry[1] else 0 }})">🐬Result</a>
+                            <a class="btn btn-warning " href="/edit/entry/{{ entry[6] }}">Edit</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- <div class="mt-4 pt-4 container-fluid">
+
+    <!-- <table class="table bordered table-striped">
         <thead>
             <tr>
                 <th>{{ headers[3].name | capitalize }}</th>
@@ -45,5 +89,5 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
+</div> -->
 {% endblock %}

@@ -1,15 +1,18 @@
 .result-green {
-    background-color: lightgreen;
+    background-color: rgb(183, 243, 183);
 }
 
 .result-red {
-    background-color: lightcoral;
+    background-color: rgb(247, 191, 191);
 }
 
 .makers-card {
     width: 18rem;
 }
 
+.card-text {
+    min-height: 75px;
+}
 .spoiler-text {
     color: transparent;
     cursor: grab;
