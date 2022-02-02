@@ -25,25 +25,21 @@ function toggleResult(id, result) {
                 $(`#result-${id}`).text("W").addClass('result-green').removeClass('result-red')
                 $('#win-perc-num').text(tWins)
                 $('#lose-perc-num').text(tLoses-1)
-                console.log($(`#flip-result-${id}`))    
-                $(`#flip-result-${id}`).attr("onclick", "toggleResult(29, 1)")
+                $(`#flip-result-${id}`).attr("onclick", `toggleResult(${id}, 1)`)
                 console.log('w')
             } else {
                 tLoses += 1
                 $(`#result-${id}`).text("L").removeClass('result-green').addClass('result-red')
                 $('#lose-perc-num').text(tLoses)
                 $('#win-perc-num').text(tWins-1)
-                $(`#flip-result-${id}`).attr("onclick", "toggleResult(29, 0)")
+                $(`#flip-result-${id}`).attr("onclick", `toggleResult(${id}, 0)`)
                 console.log('l')
             }
+            console.log('a')
             $('span#win-perc-navbar')[0].textContent = (tWins /tTotal * 100).toFixed()
+            console.log(tLoses/tTotal * 100)
+            console.log($('span#lose-perc-navbar')[0].textContent)
             $('span#lose-perc-navbar')[0].textContent = (tLoses/tTotal * 100).toFixed()
-        },
-        error: function(res, stat, err) {
-            console.log(`error: ${err}`)
-        },
-        complete: function() {
-            console.log("it's over")
         }
 
     })
