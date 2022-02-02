@@ -75,7 +75,7 @@ def update_maker(db, id, data, conf):
     return cur
 
 def toggle_entry(db, data, conf):
-    result = False if data['result'] == 0 else True
+    result = True if data['result'] == 0 else False
     cur = db.cursor()
     cur.execute(f"UPDATE entries SET result={result} WHERE id = {data['id']} RETURNING id")
     return cur

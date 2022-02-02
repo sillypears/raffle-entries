@@ -35,8 +35,7 @@
                     <div class="row">
                         <div class="col text-center">
                             <a id="flip-result-{{entry[6]}}" class="btn btn-secondary"
-
-                                onclick='toggleResult({{ entry[6] }}, {% if entry[1] == "True" %}1{% else %}0{% endif %})'>🐬Result</a>
+                                onclick='toggleResult({{ entry[6] }}, {% if entry[1] == True %}1{% else %}0{% endif %})'>🐬Result</a>
                             <a class="btn btn-warning " href="/edit/entry/{{ entry[6] }}">Edit</a>
                         </div>
                     </div>
