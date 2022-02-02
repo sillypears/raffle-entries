@@ -22,19 +22,22 @@ function toggleResult(id, result) {
             console.log(tWins, tLoses, tTotal)
             if ($(`#result-${id}`).text() === "L") {
                 tWins += 1
+                tLoses -= 1
                 $(`#result-${id}`).text("W").addClass('result-green').removeClass('result-red')
-                $('#win-perc-num').text(tWins)
-                $('#lose-perc-num').text(tLoses-1)
                 $(`#flip-result-${id}`).attr("onclick", `toggleResult(${id}, 1)`)
                 console.log('w')
+                $('#win-perc-num').text(tWins)
+                $('#lose-perc-num').text(tLoses)
             } else {
                 tLoses += 1
+                tWins-= 1
                 $(`#result-${id}`).text("L").removeClass('result-green').addClass('result-red')
-                $('#lose-perc-num').text(tLoses)
-                $('#win-perc-num').text(tWins-1)
                 $(`#flip-result-${id}`).attr("onclick", `toggleResult(${id}, 0)`)
-                console.log('l')
+                console.log('l')                
+                $('#lose-perc-num').text(tLoses)
+                $('#win-perc-num').text(tWins)
             }
+
             console.log('a')
             $('span#win-perc-navbar')[0].textContent = (tWins /tTotal * 100).toFixed()
             console.log(tLoses/tTotal * 100)
