@@ -1,54 +1,43 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for
 from flask_api import status
 import math
 from pprint import pprint
 from datetime import datetime
 import os
-import db.db as database
 from urllib.parse import urlparse
 import json
+from project import create_app
+from . import db
+from . import database
+from flask_login import login_required, current_user
 
-url = urlparse(os.environ.get('DATABASE_URL'))
+main = Blueprint('main', __name__)
 
+conf = create_app().config['CONFIG']
 
-class Config(object):
-    DEBUG = os.environ.get('FLASK_DEBUG')
-    DATABASE_HOST = url.hostname
-    DATABASE_PORT = url.port
-    DATABASE_USER = url.username
-    DATABASE_PASS = url.password
-    DATABASE_SCHEMA = url.path[1:]
-
-
-conf = Config
-
-app = Flask(__name__, static_folder='static')
-
-
-@app.route("/", methods=["GET"])
+@main.route("/", methods=["GET"])
 def index():
-    db = database.get_db(conf)
-    e = database.get_entries(db, conf)
+    cur = database.get_db(conf)
+    e = database.get_entries(cur, conf)
     entries = e.fetchall()
-    db.close()
+    cur.close()
     return render_template("index.html", percs=get_percs(), entries=entries, headers=e.description, total=len(entries))
 
-
-@app.route("/entry/<id>", methods=["GET"])
+@main.route("/entry/<id>", methods=["GET"])
 def get_entry_by_id(id):
-    db = database.get_db(conf)
-    entry = database.get_entry(db, id, conf).fetchall()[0]
-    db.close()
+    cur = database.get_db(conf)
+    entry = database.get_entry(cur, id, conf).fetchall()[0]
+    cur.close()
     return render_template("entry.html", percs=get_percs(), entry=entry)
 
 
-@app.route("/makers", methods=["GET"])
+@main.route("/makers", methods=["GET"])
 def makers():
     makers = {}
-    db = database.get_db(conf)
-    ms = database.get_makers_raffles(db, conf).fetchall()
+    cur = database.get_db(conf)
+    ms = database.get_makers_raffles(cur, conf).fetchall()
     for maker in ms:
-        mpercs = database.get_percent_by_id(db, maker[0], conf).fetchall()
+        mpercs = database.get_percent_by_id(cur, maker[0], conf).fetchall()
         for perc in mpercs:
             if perc[0] in makers.keys() and len(perc) > 0:
                 if perc[2]:
@@ -75,19 +64,19 @@ def makers():
                     makers[perc[0]]['display'] = perc[1]
                     makers[perc[0]]['total'] = perc[3]
                     makers[perc[0]]['mid'] = perc[4]
-    db.close()
+    cur.close()
     return render_template("makers.html", percs=get_percs(), makers=makers, total=len(makers))
 
 
-@app.route("/maker/<id>", methods=["GET"])
+@main.route("/maker/<id>", methods=["GET"])
 def get_maker_by_id(id):
-    db = database.get_db(conf)
-    maker = database.get_entries_by_maker(db, id, conf).fetchall()
-    db.close()
+    cur = database.get_db(conf)
+    maker = database.get_entries_by_maker(cur, id, conf).fetchall()
+    cur.close()
     return render_template("maker.html", percs=get_percs(), maker=maker)
 
 
-@app.route("/add/maker", methods=["GET", "POST"])
+@main.route("/add/maker", methods=["GET", "POST"])
 def add_maker():
     if request.method == 'POST':
         f = request.form
@@ -98,16 +87,16 @@ def add_maker():
         except:
             print('stop failing')
             return redirect("/")
-        db = database.get_db(conf)
+        cur = database.get_db(conf)
         entry = database.add_maker(
-            db, {'name': name, 'display': display, 'instagram': instagram}, conf)
-        db.close()
+            cur, {'name': name, 'display': display, 'instagram': instagram}, conf)
+        cur.close()
         return redirect(url_for('index'))
     else:
         return render_template("add-maker.html", percs=get_percs())
 
 
-@app.route("/add/entry", methods=["GET", "POST"])
+@main.route("/add/entry", methods=["GET", "POST"])
 def add_entry():
     if request.method == 'POST':
         f = request.form
@@ -124,34 +113,34 @@ def add_entry():
             result = True if f['result'] == 'on' else False
         except:
             result = False
-        db = database.get_db(conf)
-        entry = database.add_entry(db, {'maker_id': maker, 'link': link,
+        cur = database.get_db(conf)
+        entry = database.add_entry(cur, {'maker_id': maker, 'link': link,
                                         'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)
-        db.close()
+        cur.close()
         return redirect(url_for('index'))
     else:
-        db = database.get_db(conf)
-        makers = database.get_makers(db, conf).fetchall()
-        db.close()
+        cur = database.get_db(conf)
+        makers = database.get_makers(cur, conf).fetchall()
+        cur.close()
         return render_template("add-entry.html", percs=get_percs(), todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
 
 
-@app.route("/edit/entry/<id>", methods=["GET", "POST"])
+@main.route("/edit/entry/<id>", methods=["GET", "POST"])
 def edit_entry(id):
     if request.method == "GET":
-        db = database.get_db(conf)
-        entry = database.get_entry(db, id, conf).fetchall()[0]
-        makers = database.get_makers(db, conf).fetchall()
-        db.close()
+        cur = database.get_db(conf)
+        entry = database.get_entry(cur, id, conf).fetchall()[0]
+        makers = database.get_makers(cur, conf).fetchall()
+        cur.close()
         return render_template("edit-entry.html",  percs=get_percs(),  entry=entry, makers=makers)
     elif request.method == "POST":
-        db = database.get_db(conf)
-        update = database.update_entry(db, id, request.form, conf)
-        db.close()
+        cur = database.get_db(conf)
+        update = database.update_entry(cur, id, request.form, conf)
+        cur.close()
         return redirect(url_for('index'))
 
 
-@app.route("/edit/maker/<id>", methods=["GET", "POST"])
+@main.route("/edit/maker/<id>", methods=["GET", "POST"])
 def edit_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
@@ -164,7 +153,7 @@ def edit_maker(id):
         db.close()
         return redirect(url_for('index'))
 
-@app.route("/delete/entry/<id>", methods=["GET", "POST"])
+@main.route("/delete/entry/<id>", methods=["GET", "POST"])
 def del_entry(id):
     if request.method == "GET":
         return render_template("del-entry.html", percs=get_percs(), id=id )
@@ -174,7 +163,7 @@ def del_entry(id):
         db.close()
         return redirect(url_for('index'))
 
-@app.route("/del-maker", methods=["GET", "POST"])
+@main.route("/del-maker", methods=["GET", "POST"])
 def del_makers():
     if request.method == "GET":
         db = database.get_db(conf)
@@ -189,7 +178,7 @@ def del_makers():
         db.close()
         return redirect(url_for('index'))
 
-@app.route("/toggle-result", methods=["PUT"])
+@main.route("/toggle-result", methods=["PUT"])
 def toggle_result():
     try:
         id = request.form['id']
@@ -205,7 +194,7 @@ def toggle_result():
     return "", status.HTTP_204_NO_CONTENT
 
 
-@app.route("/api/getEntriesByMaker", methods=["GET"])
+@main.route("/api/getEntriesByMaker", methods=["GET"])
 def get_entries_by_maker():
     db = database.get_db(conf)
     e = database.get_entries(db, conf)
@@ -263,12 +252,13 @@ def get_percs_by_id(id):
         return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
 
 
+
 if __name__ == "__main__":
     try:
-        db = database.get_db(conf)
-        db.close()
+        database = database.get_db(conf)
+        database.close()
     except:
-        print("Database connection failed, setting up new DB")
-        import db.build_db
-        db.build_db.main(conf)
+        print("databasease connection failed, setting up new DB")
+        import database.build_db
+        database.build_db.main(conf)
     app.run(threaded=True, debug=conf.DEBUG)
