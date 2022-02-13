@@ -1,5 +1,6 @@
 from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for
 from flask_api import status
+from flask_login import login_required, current_user
 import math
 from pprint import pprint
 from datetime import datetime
@@ -9,26 +10,26 @@ import json
 from project import create_app
 from . import db
 from . import database
-from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
 
 conf = create_app().config['CONFIG']
 
 @main.route("/", methods=["GET"])
+@login_required
 def index():
     cur = database.get_db(conf)
-    e = database.get_entries(cur, conf)
+    e = database.get_entries(cur, current_user.id, conf)
     entries = e.fetchall()
     cur.close()
-    return render_template("index.html", percs=get_percs(), entries=entries, headers=e.description, total=len(entries))
+    return render_template("index.html", percs=get_percs(), user=current_user, entries=entries, headers=e.description, total=len(entries))
 
 @main.route("/entry/<id>", methods=["GET"])
 def get_entry_by_id(id):
     cur = database.get_db(conf)
-    entry = database.get_entry(cur, id, conf).fetchall()[0]
+    entry = database.get_entry(cur, id, current_user.id,conf).fetchall()[0]
     cur.close()
-    return render_template("entry.html", percs=get_percs(), entry=entry)
+    return render_template("entry.html", percs=get_percs(), user=current_user, entry=entry)
 
 
 @main.route("/makers", methods=["GET"])
@@ -37,7 +38,7 @@ def makers():
     cur = database.get_db(conf)
     ms = database.get_makers_raffles(cur, conf).fetchall()
     for maker in ms:
-        mpercs = database.get_percent_by_id(cur, maker[0], conf).fetchall()
+        mpercs = database.get_percent_by_id(cur, maker[0], current_user.id, conf).fetchall()
         for perc in mpercs:
             if perc[0] in makers.keys() and len(perc) > 0:
                 if perc[2]:
@@ -65,15 +66,24 @@ def makers():
                     makers[perc[0]]['total'] = perc[3]
                     makers[perc[0]]['mid'] = perc[4]
     cur.close()
-    return render_template("makers.html", percs=get_percs(), makers=makers, total=len(makers))
+    return render_template("makers.html", percs=get_percs(), user=current_user, makers=makers, total=len(makers))
 
 
-@main.route("/maker/<id>", methods=["GET"])
+@main.route("/maker/id/<id>", methods=["GET"])
 def get_maker_by_id(id):
     cur = database.get_db(conf)
-    maker = database.get_entries_by_maker(cur, id, conf).fetchall()
+    maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
+    maker_entries = database.get_entries_by_maker(cur, id, current_user.id, conf).fetchall()
     cur.close()
-    return render_template("maker.html", percs=get_percs(), maker=maker)
+    return render_template("maker.html", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
+
+@main.route("/maker/name/<name>", methods=["GET"])
+def get_maker_by_name(name):
+    cur = database.get_db(conf)
+    maker = database.get_maker_by_name(cur, name, current_user.id, conf).fetchall()[0]
+    maker_entries = database.get_entries_by_maker(cur, maker[0], current_user.id, conf).fetchall()
+    cur.close()
+    return render_template("maker.html", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
 
 
 @main.route("/add/maker", methods=["GET", "POST"])
@@ -86,14 +96,14 @@ def add_maker():
             instagram = f['instagram']
         except:
             print('stop failing')
-            return redirect("/")
+            return redirect("main.index")
         cur = database.get_db(conf)
         entry = database.add_maker(
             cur, {'name': name, 'display': display, 'instagram': instagram}, conf)
         cur.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     else:
-        return render_template("add-maker.html", percs=get_percs())
+        return render_template("add-maker.html", percs=get_percs(), user=current_user)
 
 
 @main.route("/add/entry", methods=["GET", "POST"])
@@ -115,81 +125,82 @@ def add_entry():
             result = False
         cur = database.get_db(conf)
         entry = database.add_entry(cur, {'maker_id': maker, 'link': link,
-                                        'notes': notes, 'epoch': epoch, 'date': date, 'result': result}, conf)
+                                        'notes': notes, 'epoch': epoch, 'date': date,  'result': result}, current_user.id, conf)
         cur.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     else:
         cur = database.get_db(conf)
-        makers = database.get_makers(cur, conf).fetchall()
+        makers = database.get_makers(cur, current_user.id, conf).fetchall()
         cur.close()
-        return render_template("add-entry.html", percs=get_percs(), todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
+        return render_template("add-entry.html", percs=get_percs(), user=current_user, todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
 
 
 @main.route("/edit/entry/<id>", methods=["GET", "POST"])
 def edit_entry(id):
     if request.method == "GET":
         cur = database.get_db(conf)
-        entry = database.get_entry(cur, id, conf).fetchall()[0]
-        makers = database.get_makers(cur, conf).fetchall()
+        entry = database.get_entry(cur, id, current_user.id, conf).fetchall()[0]
+        makers = database.get_makers(cur, current_user.id, conf).fetchall()
         cur.close()
-        return render_template("edit-entry.html",  percs=get_percs(),  entry=entry, makers=makers)
+        return render_template("edit-entry.html",  percs=get_percs(), user=current_user, entry=entry, makers=makers)
     elif request.method == "POST":
         cur = database.get_db(conf)
-        update = database.update_entry(cur, id, request.form, conf)
+        update = database.update_entry(cur, id, request.form, current_user.id, conf)
         cur.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
 
 @main.route("/edit/maker/<id>", methods=["GET", "POST"])
 def edit_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
-        maker = database.get_maker(db, id, conf).fetchall()[0]
+        maker = database.get_maker(db, id, current_user.id, conf).fetchall()[0]
         db.close()
-        return render_template("edit-maker.html", percs=get_percs(), e_id=id, maker=maker)
+        return render_template("edit-maker.html", percs=get_percs(), user=current_user, e_id=id, maker=maker)
     elif request.method == "POST":
         db = database.get_db(conf)
-        update = database.update_maker(db, id, request.form, conf)
+        update = database.update_maker(db, id, request.form, current_user.id, conf)
         db.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
 @main.route("/delete/entry/<id>", methods=["GET", "POST"])
 def del_entry(id):
     if request.method == "GET":
-        return render_template("del-entry.html", percs=get_percs(), id=id )
+        return render_template("del-entry.html", percs=get_percs(), user=current_user, id=id )
     if request.method == "POST":
         db = database.get_db(conf) 
-        del_id = database.del_entry(db, id, conf)
+        del_id = database.del_entry(db, id, current_user.id, conf)
         db.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
 @main.route("/del-maker", methods=["GET", "POST"])
 def del_makers():
     if request.method == "GET":
         db = database.get_db(conf)
-        makers = database.get_makers(db, conf).fetchall()
+        makers = database.get_makers(db, current_user.id, conf).fetchall()
         db.close()
-        return render_template('del-maker.html', percs=get_percs(), makers=makers)
+        return render_template('del-maker.html', percs=get_percs(), user=current_user, makers=makers)
     elif request.method == "POST":
         db = database.get_db(conf)
         for deletee in request.form.getlist('del-maker'):
             print(f"deleting {deletee}")
-            deleted = database.del_maker(db, int(deletee), conf)
+            deleted = database.del_maker(db, int(deletee), current_user.id, conf)
         db.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('main.ndex'))
 
 @main.route("/toggle-result", methods=["PUT"])
 def toggle_result():
+    toggle = None   
     try:
         id = request.form['id']
         result = int(request.form['result'])
     except:
         return "", status.HTTP_400_BAD_REQUEST
-    print(id, result)
     db = database.get_db(conf)
-    toggle = database.toggle_entry(db, {'id': id, 'result': result}, conf)
-    tggle = toggle.fetchall()[0]
-    print(tggle)
+    
+    print(id, current_user.id, database.check_user_to_entry(db, id, current_user.id, conf))
+    if database.check_user_to_entry(db, id, current_user.id, conf):
+        toggle = database.toggle_entry(db, {'id': id, 'result': result}, current_user.id, conf)
     db.close()
     return "", status.HTTP_204_NO_CONTENT
 
@@ -197,7 +208,7 @@ def toggle_result():
 @main.route("/api/getEntriesByMaker", methods=["GET"])
 def get_entries_by_maker():
     db = database.get_db(conf)
-    e = database.get_entries(db, conf)
+    e = database.get_entries(db, current_user.id, conf)
     es = e.fetchall()
     entries = {}
     print(e.description)
@@ -213,7 +224,7 @@ def get_entries_by_maker():
 def get_percs():
     try:
         db = database.get_db(conf)
-        p = database.get_percents(db, conf)
+        p = database.get_percents(db, current_user.id, conf)
         pes = p.fetchall()
         percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
         for perc in pes:
@@ -234,7 +245,7 @@ def get_percs():
 def get_percs_by_id(id):
     try:
         db = database.get_db(conf)
-        p = database.get_percents(db, id, conf)
+        p = database.get_percents(db, id, current_user.id, conf)
         pes = p.fetchall()
         percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
         for perc in pes:

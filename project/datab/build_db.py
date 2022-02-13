@@ -10,6 +10,12 @@ def main(conf):
     sqlDropDatabase = f"""DROP DATABASE IF EXISTS {conf.DATABASE_SCHEMA};"""
     sqlCreateDatabase = f"""CREATE DATABASE {conf.DATABASE_SCHEMA};"""
     sqlGrantDatabase = f"""GRANT ALL ON DATABASE {conf.DATABASE_SCHEMA} TO pg_database_owner;"""
+    sqlCreateUsers = f"""CREATE TABLE public.users
+    (
+        id serial NOT NULL,
+        name character varying(100) NOT NULL,
+        password character varying(500) NOT NULL
+    );"""
     sqlCreateMakers = f"""CREATE TABLE IF NOT EXISTS makers
     (
         id serial NOT NULL,
@@ -22,6 +28,7 @@ def main(conf):
     sqlCreateEntries = f"""CREATE TABLE IF NOT EXISTS entries
     (
         id serial NOT NULL,
+        user_id integer NOT NULL, 
         maker_id integer NOT NULL,
         epoch integer NOT NULL,
         raffle_link character varying(500) COLLATE pg_catalog."default" NOT NULL,
@@ -29,6 +36,10 @@ def main(conf):
         result boolean NOT NULL DEFAULT false,
         date date NOT NULL,
         CONSTRAINT entries_pkey PRIMARY KEY (id),
+        CONSTRAINT user_id_fkey FOREIGN KEY (user_id)
+            REFERENCES public.users (id) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION
         CONSTRAINT maker_id_fkey FOREIGN KEY (maker_id)
             REFERENCES public.makers (id) MATCH SIMPLE
             ON UPDATE NO ACTION
@@ -49,6 +60,11 @@ def main(conf):
     FROM entries e
         LEFT JOIN makers m ON e.maker_id = m.id;"""
 
+    sqlAddUsers = f"""
+        INSERT INTO users (name, password) VALUES ('user1', 'sha256$RBFTAYLKjqbXxlXt$40088c30c40ec938c5427b2bca21ea304a06209518dc30795ec8231fdbdfb644');
+        INSERT INTO users (name, password) VALUES ('user1', 'sha256$RBFTAYLKjqbXxlXt$40088c30c40ec938c5427b2bca21ea304a06209518dc30795ec8231fdbdfb644');
+
+    """
     sqlAddMakers = f"""
         INSERT INTO makers (name, display, instagram) VALUES ('test1', 'Test 1', 'test.1');
         INSERT INTO makers (name, display, instagram) VALUES ('test2', 'Test 2', 'test.2');
@@ -58,17 +74,17 @@ def main(conf):
     """
 
     sqlAddEntries = f"""
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (1, {int(datetime.now().timestamp())}, 'https://frms.gle/test1', 'raffle for test1', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (2, {int(datetime.now().timestamp())}, 'https://frms.gle/test2', 'raffle for test2', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (3, {int(datetime.now().timestamp())}, 'https://frms.gle/test3', 'raffle for test3', true, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (2, {int(datetime.now().timestamp())}, 'https://frms.gle/test4', 'raffle for test4', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (4, {int(datetime.now().timestamp())}, 'https://frms.gle/test5', 'raffle for test5', true, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (4, {int(datetime.now().timestamp())}, 'https://frms.gle/test6', 'raffle for test6', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (2, {int(datetime.now().timestamp())}, 'https://frms.gle/test7', 'raffle for test7', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (5, {int(datetime.now().timestamp())}, 'https://frms.gle/test8', 'raffle for test8', true, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (1, {int(datetime.now().timestamp())}, 'https://frms.gle/test9', 'raffle for test9', true, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (2, {int(datetime.now().timestamp())}, 'https://frms.gle/test10', 'raffle for test10', false, '{datetime.now().strftime('%Y-%m-%d')}');
-        INSERT INTO entries (maker_id, epoch, raffle_link, notes, result, date) VALUES (3, {int(datetime.now().timestamp())}, 'https://frms.gle/test11', 'raffle for test11', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 1, {int(datetime.now().timestamp())}, 'https://frms.gle/test1', 'raffle for test1', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 2, {int(datetime.now().timestamp())}, 'https://frms.gle/test2', 'raffle for test2', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (2, 3, {int(datetime.now().timestamp())}, 'https://frms.gle/test3', 'raffle for test3', true, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 2, {int(datetime.now().timestamp())}, 'https://frms.gle/test4', 'raffle for test4', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (2, 4, {int(datetime.now().timestamp())}, 'https://frms.gle/test5', 'raffle for test5', true, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (2, 4, {int(datetime.now().timestamp())}, 'https://frms.gle/test6', 'raffle for test6', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 2, {int(datetime.now().timestamp())}, 'https://frms.gle/test7', 'raffle for test7', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 5, {int(datetime.now().timestamp())}, 'https://frms.gle/test8', 'raffle for test8', true, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (2, 1, {int(datetime.now().timestamp())}, 'https://frms.gle/test9', 'raffle for test9', true, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (2, 2, {int(datetime.now().timestamp())}, 'https://frms.gle/test10', 'raffle for test10', false, '{datetime.now().strftime('%Y-%m-%d')}');
+        INSERT INTO entries (user_id, maker_id, epoch, raffle_link, notes, result, date) VALUES (1, 3, {int(datetime.now().timestamp())}, 'https://frms.gle/test11', 'raffle for test11', false, '{datetime.now().strftime('%Y-%m-%d')}');
     """
 
     con = psycopg2.connect(
@@ -93,10 +109,12 @@ def main(conf):
         )
         con.autocommit = True
         cur = con.cursor()
+        cur.execute(sql.SQL(sqlCreateUsers))
         cur.execute(sql.SQL(sqlCreateMakers))
         cur.execute(sql.SQL(sqlCreateEntries))
         cur.execute(sql.SQL(sqlCreateView))
         if (conf.DEBUG):
+            cur.execute(sql.SQL(sqlAddUsers))
             cur.execute(sql.SQL(sqlAddMakers))
             cur.execute(sql.SQL(sqlAddEntries))
         con.close()

@@ -1,3 +1,6 @@
+body {
+    background-color: rgb(230, 225, 225);
+}
 .result-green {
     background-color: rgb(183, 243, 183);
 }
@@ -26,34 +29,3 @@
     color: inherit;
 }
 
-@media (min-width: 34em) {
-    .maker-card-columns {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
-    }
-}
-
-@media (min-width: 48em) {
-    .maker-card-columns {
-        -webkit-column-count: 3;
-        -moz-column-count: 3;
-        column-count: 3;
-    }
-}
-
-@media (min-width: 62em) {
-    .maker-card-columns {
-        -webkit-column-count: 4;
-        -moz-column-count: 4;
-        column-count: 4;
-    }
-}
-
-@media (min-width: 75em) {
-    .maker-card-columns {
-        -webkit-column-count: 5;
-        -moz-column-count: 5;
-        column-count: 5;
-    }
-}

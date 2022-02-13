@@ -8,7 +8,7 @@
         <div class="col-3">
             <div class="card makers-card my-4">
                 <div class="card-header d-flex align-items-center ">
-                    <a href="/maker/{{ makers[maker]['mid']}}">{{ makers[maker]['display'] }}</a>
+                    <a href="/maker/id/{{ makers[maker]['mid']}}">{{ makers[maker]['display'] }}</a>
                 </div>
                 <div class="card-body">
                     <div class="">Wins: {{ '{0:0.2f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}%</div>

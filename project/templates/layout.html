@@ -14,6 +14,7 @@
 
 <body>
     <nav class="nav fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <
         <a class="navbar-brand" href="#">💋</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,11 +32,11 @@
                         Adds
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/add/entry">New Entry</a>
+                        <li>
+                            <a class="dropdown-item" href="/add/entry">New Entry</a>
                         </li>
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/add/maker">New Maker</a>
+                        <li>
+                            <a class="dropdown-item" href="/add/maker">New Maker</a>
                         </li>
                     </ul>
                 </li>
@@ -45,8 +46,8 @@
                         Stuff
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/makers">Makers</a>
+                        <li>
+                            <a class="dropdown-item" href="/makers">Makers</a>
                         </li>
                     </ul>
                 </li>
@@ -56,16 +57,22 @@
                         Secret
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/del-entry">Delete Entry</a>
+                        <li>
+                            <a class="dropdown-item" href="/del-entry">Delete Entry</a>
                         </li>
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/del-maker">Delete Maker</a>
+                        <li>
+                            <a class="dropdown-item" href="/del-maker">Delete Maker</a>
                         </li>
                     </ul>
                 </li>
             </ul>
         </div>
+        <span class="navbar-text ms-auto me-2">
+            <span class="">
+                Hi <a href="/logout">{{ user.name }}</a>!
+            </span>
+
+        </span>
         <span class="navbar-text ms-auto me-2">
             <span class="">
                 W: <span id="win-perc-navbar">{{ percs.winp }}</span>%
@@ -89,7 +96,14 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <footer class="footer fixed-bottom">
-        <a href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
+        <div class="row">
+            <div class="col-lg-6">
+                <a href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
+            </div>
+            <div class="col text-end">
+                Export <a href="/export/csv">csv</a> | <a href="/export/json">json</a>
+            </div>
+        </div>
     </footer>
 </body>
 
