@@ -26,14 +26,15 @@ def index():
     return render_template("index.html", nav="index", percs=get_percs(), user=current_user, entries=entries, headers=e.description, total=len(entries))
 
 @main.route("/entry/<id>", methods=["GET"])
+@login_required
 def get_entry_by_id(id):
     cur = database.get_db(conf)
     entry = database.get_entry(cur, id, current_user.id,conf).fetchall()[0]
     cur.close()
     return render_template("entry.html", nav="entry", percs=get_percs(), user=current_user, entry=entry)
 
-
 @main.route("/makers", methods=["GET"])
+@login_required
 def makers():
     makers = {}
     cur = database.get_db(conf)
@@ -71,6 +72,7 @@ def makers():
 
 
 @main.route("/maker/id/<id>", methods=["GET"])
+@login_required
 def get_maker_by_id(id):
     cur = database.get_db(conf)
     maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
@@ -79,6 +81,7 @@ def get_maker_by_id(id):
     return render_template("maker.html", nav="maker-id", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
 
 @main.route("/maker/name/<name>", methods=["GET"])
+@login_required
 def get_maker_by_name(name):
     cur = database.get_db(conf)
     maker = database.get_maker_by_name(cur, name, current_user.id, conf).fetchall()[0]
@@ -88,6 +91,7 @@ def get_maker_by_name(name):
 
 
 @main.route("/add/maker", methods=["GET", "POST"])
+@login_required
 def add_maker():
     if request.method == 'POST':
         f = request.form
@@ -108,6 +112,7 @@ def add_maker():
 
 
 @main.route("/add/entry", methods=["GET", "POST"])
+@login_required
 def add_entry():
     if request.method == 'POST':
         f = request.form
@@ -137,6 +142,7 @@ def add_entry():
 
 
 @main.route("/edit/entry/<id>", methods=["GET", "POST"])
+@login_required
 def edit_entry(id):
     if request.method == "GET":
         cur = database.get_db(conf)
@@ -152,6 +158,7 @@ def edit_entry(id):
 
 
 @main.route("/edit/maker/<id>", methods=["GET", "POST"])
+@login_required
 def edit_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
@@ -165,6 +172,7 @@ def edit_maker(id):
         return redirect(url_for('main.index'))
 
 @main.route("/delete/entry/<id>", methods=["GET", "POST"])
+@login_required
 def del_entry(id):
     if request.method == "GET":
         return render_template("del-entry.html", nav="entry-del", percs=get_percs(), user=current_user, id=id )
@@ -175,6 +183,7 @@ def del_entry(id):
         return redirect(url_for('main.index'))
 
 @main.route("/delete/maker/<id>", methods=["GET", "POST"])
+@login_required
 def delete_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
@@ -190,6 +199,7 @@ def delete_maker(id):
         return redirect(url_for('main.ndex'))
 
 @main.route("/del-maker-secret-hidden-AJdneandDnsna", methods=["GET", "POST"])
+@login_required
 def del_makers():
     if request.method == "GET":
         db = database.get_db(conf)
@@ -205,6 +215,7 @@ def del_makers():
         return redirect(url_for('main.ndex'))
 
 @main.route("/toggle-result", methods=["PUT"])
+@login_required
 def toggle_result():
     toggle = None   
     try:
