@@ -9,7 +9,10 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="header">{{maker[2]}}</div>
-                            {% if maker[3] %}<a href="https://instagram.com/{{maker[3]}}" targer="_blank">Instagram</a>{% endif%}
+                            {% if maker[3] %}
+                                {% if maker[3].startswith('https')%}<a href="{{maker[3]}}" target="_blank">Instagram</a>
+                                {% else %}<a href="https://instagram.com/{{maker[3]}}" target="_blank">Instagram</a>{% endif %}
+                            {% endif%}
                         </div>
                     </div>
                 </div>
