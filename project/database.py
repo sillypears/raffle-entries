@@ -81,7 +81,7 @@ def get_percent_by_id(db, id, user_id, conf):
 
 def add_entry(db, data, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"""INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link'].replace("'","''")}', '{data['notes'].replace("'","''")}', {data['result']}) RETURNING id""")
+    cur.execute(f"""INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result, user_id) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link'].replace("'","''")}', '{data['notes'].replace("'","''")}', {data['result']}, {user_id}) RETURNING id""")
     return cur
 
 def update_entry(db, id, data, user_id, conf):
@@ -93,9 +93,9 @@ def update_entry(db, id, data, user_id, conf):
     cur.execute(f"""UPDATE entries SET maker_id={data['maker']}, epoch={int(datetime.fromisoformat(data['date']).timestamp())}, date='{data['date']}', raffle_link='{data['link'].replace("'","''")}', notes='{data['notes'].replace("'","''")}', result={result} WHERE id={id}""")
     return cur
 
-def add_maker(db, data, conf):
+def add_maker(db, data, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"INSERT INTO makers (name, display, instagram) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}') RETURNING id")
+    cur.execute(f"INSERT INTO makers (name, display, instagram, user_id) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}', {user_id}) RETURNING id")
     return cur
 
 def update_maker_by_id(db, id, data, user_id, conf):
@@ -103,12 +103,12 @@ def update_maker_by_id(db, id, data, user_id, conf):
     cur.execute(f"""UPDATE makers SET name='{data['name']}', display='{(data['display'])}', instagram='{data['instagram']}' WHERE id={id} AND user_id={user_id}""")
     return cur
 
-def del_maker(db, id, conf):
+def del_maker(db, id, user_id, conf):
     cur = db.cursor()
     cur.execute(f"DELETE FROM makers WHERE id = {id}")
     return cur
 
-def del_entry(db, id, conf):
+def del_entry(db, id, user_id, conf):
     cur = db.cursor()
     cur.execute(f"DELETE FROM entries WHERE id = {id}")
     return cur

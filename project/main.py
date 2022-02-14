@@ -100,7 +100,7 @@ def add_maker():
             return redirect("main.index")
         cur = database.get_db(conf)
         entry = database.add_maker(
-            cur, {'name': name, 'display': display, 'instagram': instagram}, conf)
+            cur, {'name': name, 'display': display, 'instagram': instagram}, current_user.id, conf)
         cur.close()
         return redirect(url_for('main.index'))
     else:
