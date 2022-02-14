@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="my-2 pt-5 container-fluid">
+<div class="my-5 container-fluid">
     <div class="row">
         <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total !=1 %}s{% endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
         <span class="me-2 col-lg-1 me-auto hidden spoiler-text"><span id="win-perc-num" name="win-perc-num" class="win-perc-num" >{{ percs.win }}</span>/<span id="lose-perc-num" name="lose-perc-num" class="lose-perc-num">{{ percs.lose }}</span></span>
