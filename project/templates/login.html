@@ -2,27 +2,36 @@
 
 {% block content %}
 <div class="mt-4 pt-4 container">
-
-  <h3 class="title">Login</h3>
-  <form method="POST" action="/login">
-    <div class="field">
-      <div class="control">
-        <input class="input" type="name" name="name" placeholder="username" autofocus="">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center text-dark mt-5">Login</h2>
+      <div class="card my-5">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-danger font-weight-bold">
+          {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <form class="card-body cardbody-color p-lg-5" action="" method="POST" autocomplete="off">
+          <div class="mb-3">
+            <input type="text" class="form-control" id="Usernamne" name="username" aria-describedby="emailHelp" placeholder="user">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="password" name="password" placeholder="password">
+          </div>
+          <div class="mb-3">
+            <label class="checkbox">
+              <input type="checkbox" name="remember">
+              Remember me
+            </label>
+          </div>
+          <div class="text-center"><button type="submit" class="btn btn-color  w-100">Login</button></div>
+        </form>
+        <div id="emailHelp" class="form-text text-center mb-5 text-dark">Ahh <a href="{{ url_for('auth.signup')}}" class="text-dark fw-bold">sign</a> me up brudda.
+        </div>
       </div>
     </div>
-
-    <div class="field">
-      <div class="control">
-        <input class="input" type="password" name="password" placeholder="Your Password">
-      </div>
-    </div>
-    <div class="field">
-      <label class="checkbox">
-        <input type="checkbox" name="remember">
-        Remember me
-      </label>
-    </div>
-    <button class="btn btn-success">Login</button>
-  </form>
+  </div>
 </div>
-{% endblock %}
+  {% endblock %}

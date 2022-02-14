@@ -9,7 +9,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="header">{{maker[2]}}</div>
-                            <a href="https://instagram.com/{{maker[3]}}" targer="_blank">Instagram</a>
+                            {% if maker[3] %}<a href="https://instagram.com/{{maker[3]}}" targer="_blank">Instagram</a>{% endif%}
                         </div>
                     </div>
                 </div>
@@ -28,14 +28,17 @@
             <div class="mb-3">
                 <div class="card">
                     <div class="card-header d-flex align-items-center ">
-                        <div class="d-md-flex flex-md-row flex-column ms-auto">{{ entry[3] }}</div>
+                        <div class="d-md-flex flex-md-row flex-column ms-auto">
+                            <a href="/entry/{{entry[6]}}">{{ entry[3] }}</a>
+
+                            </div>
                     </div>
                     <div class="card-body">
                         <div class="text-center">
                             {{ entry[4] }}
                         </div>
                         <div class="text-center">
-                            <a href="{{ entry[5]}}" target="_blank">{{entry[5]}}</a>
+                            {% if entry[5].startswith('http') %}<a href="{{ entry[5]}}" target="_blank">{{entry[5]}}</a> {% endif %}
                         </div>
                     </div>
                     <div class="card-footer {{ 'result-green' if entry[1] else 'result-red'  }}">

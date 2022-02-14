@@ -113,6 +113,11 @@ def del_entry(db, id, user_id, conf):
     cur.execute(f"DELETE FROM entries WHERE id = {id}")
     return cur
 
+def add_new_user(db, username, password, conf):
+    cur = db.cursor()
+    cur.execute(f"INSERT INFO users (name, password) VALUES ({username}, {password}) RETURNING id")
+    return cur
+
 def check_user_to_entry(db, id, user_id, conf):
     entry_id = -1
     cur = db.cursor()
