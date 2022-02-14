@@ -51,7 +51,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Secret
@@ -64,7 +64,7 @@
                             <a class="dropdown-item" href="/del-maker">Delete Maker</a>
                         </li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
         </div>
         <span class="navbar-text ms-auto me-2">
@@ -95,13 +95,13 @@
         integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-    <footer class="footer fixed-bottom">
-        <div class="row">
+    <footer class="footer fixed-bottom bg-dark">
+        <div class="row m-1">
             <div class="col-lg-6">
-                <a href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
+                <a class="link-light" href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
             </div>
-            <div class="col text-end">
-                Export <a href="/export/csv">csv</a> | <a href="/export/json">json</a>
+            <div class="col text-muted text-end">
+                {% if nav == "index" %}Export <a class="link-light" href="/export/csv">csv</a> | <a class="link-light" href="/export/json">json</a>{% endif %}
             </div>
         </div>
     </footer>

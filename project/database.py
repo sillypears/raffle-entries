@@ -22,7 +22,7 @@ def close_db(db, conf):
 
 def get_makers(db, user_id, conf):
     cur = db.cursor()
-    cur.execute("SELECT id, name, display, instagram FROM makers ORDER BY name ASC")
+    cur.execute(f"SELECT id, name, display, instagram FROM makers WHERE user_id = {user_id} ORDER BY name ASC")
     return cur
 
 def get_makers_raffles(db, conf):
@@ -61,6 +61,24 @@ def get_entry(db, id, user_id, conf):
     cur.execute(f"SELECT * FROM all_entries WHERE id = {id}")
     return cur
 
+def toggle_entry(db, data, user_id, conf):
+    # check if user_id matches
+    result = True if data['result'] == 0 else False
+    cur = db.cursor()
+    cur.execute(f"UPDATE entries SET result={result} WHERE id = {data['id']} RETURNING id")
+    return cur
+
+def get_percents(db, user_id, conf):
+    cur = db.cursor()
+    cur.execute(f"SELECT result, COUNT(result) FROM entries WHERE user_id = {user_id} GROUP BY result")
+    return cur
+
+def get_percent_by_id(db, id, user_id, conf):
+    # check userid exists for entry
+    cur = db.cursor()
+    cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {id} GROUP BY m.name,e.result, m.display, m.id")
+    return cur
+
 def add_entry(db, data, user_id, conf):
     cur = db.cursor()
     cur.execute(f"""INSERT INTO entries (maker_id, epoch, date, raffle_link, notes, result) VALUES ({data['maker_id']}, {data['epoch']}, '{data['date']}', '{data['link'].replace("'","''")}', '{data['notes'].replace("'","''")}', {data['result']}) RETURNING id""")
@@ -80,27 +98,9 @@ def add_maker(db, data, conf):
     cur.execute(f"INSERT INTO makers (name, display, instagram) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}') RETURNING id")
     return cur
 
-def update_maker(db, id, data, conf):
+def update_maker_by_id(db, id, data, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"""UPDATE makers SET name='{data['name']}', display='{(data['display'])}', instagram='{data['instagram']}' WHERE id={id}""")
-    return cur
-
-def toggle_entry(db, data, user_id, conf):
-    # check if user_id matches
-    result = True if data['result'] == 0 else False
-    cur = db.cursor()
-    cur.execute(f"UPDATE entries SET result={result} WHERE id = {data['id']} RETURNING id")
-    return cur
-
-def get_percents(db, user_id, conf):
-    cur = db.cursor()
-    cur.execute(f"SELECT result, COUNT(result) FROM entries WHERE user_id = {user_id} GROUP BY result")
-    return cur
-
-def get_percent_by_id(db, id, user_id, conf):
-    # check userid exists for entry
-    cur = db.cursor()
-    cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {id} GROUP BY m.name,e.result, m.display, m.id")
+    cur.execute(f"""UPDATE makers SET name='{data['name']}', display='{(data['display'])}', instagram='{data['instagram']}' WHERE id={id} AND user_id={user_id}""")
     return cur
 
 def del_maker(db, id, conf):

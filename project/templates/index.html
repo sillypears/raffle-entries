@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="mt-4 pt-4 container-fluid">
+<div class="my-2 pt-5 container-fluid">
     <div class="row">
         <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total !=1 %}s{% endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
         <span class="me-2 col-lg-1 me-auto hidden spoiler-text"><span id="win-perc-num" name="win-perc-num" class="win-perc-num" >{{ percs.win }}</span>/<span id="lose-perc-num" name="lose-perc-num" class="lose-perc-num">{{ percs.lose }}</span></span>
@@ -13,7 +13,7 @@
 
                     <div class="card-title">
                         <div class="row">
-                            <span class="col-md-10 font-weight-bold text-align-center h5">{{ entry[0] }}</span>
+                            <span class="col-md-10 font-weight-bold text-align-center h5"><a class="link-info" href="/maker/id/{{entry[7]}}">{{ entry[0] }}</a></span>
                             {% if entry[1] %}
                             <span id="result-{{ entry[6]}}" name="result" class="result result-green rounded col-md-2 font-weight-bold p-1 text-center">W</span>
                             {% else %}
@@ -23,7 +23,7 @@
                     </div>
                     <div class="card-text ">
                         <div class="text-right muted small">
-                            <a href="/entry/{{ entry[6]}}">{{entry[3] }}</a>
+                            <a class="link-dark" href="/entry/{{ entry[6]}}">{{entry[3] }}</a>
                         </div>
                         <div class=" fs-6">
                             {{ entry[4] }}
@@ -57,45 +57,4 @@
     </div>
 </div>
 
-<!-- <div class="mt-4 pt-4 container-fluid">
-
-    <!-- <table class="table bordered table-striped">
-        <thead>
-            <tr>
-                <th>{{ headers[3].name | capitalize }}</th>
-
-                <th>{{ headers[0].name | capitalize }}</th>
-                <th>{{ headers[1].name | capitalize }}</th>
-                <th>{{ headers[5].name | capitalize }}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in entries %}
-            <tr class="hover-shadow">
-                <td id="date-{{ entry[6]}}" name="date" class="date" width="10%"><a class="link-secondary"
-                        href="/entry/{{entry[6]}}">{{ entry[3] }}</a></td>
-
-                <td id="display-{{ entry[6]}}" name="display" class="display" width="25%"><a class="link-info"
-                        href="/maker/{{entry[7]}}">{{ entry[0] }}</a></td>
-                <td id="result-{{ entry[6]}}" name="result" class="result" width="10%">{% if entry[1] == 0 %}L{% else
-                    %}W{% endif %}</td>
-                <td id="link-{{ entry[6]}}" name="link" class="link" width="35%"><a class="href notes" name="notes"
-                        id="notes" href="{{ entry[5] }}" target="_blank">{{ entry[4] }}</a></td>
-                <td id="button-{{ entry[6]}}" name="button" class="button" width="8%">
-                    <a class="btn btn-secondary"
-                        onclick="toggleResult({{ entry[6] }}, {{ 1 if entry[1] else 0 }})">🐬Result</a>
-                </td>
-                <td id="button-{{ entry[6]}}" name="button" class="button" width="7%">
-                    <a class="btn btn-warning" href="/edit/entry/{{ entry[6] }}">Edit</a>
-                </td>
-
-                {% for e in entry %}
-
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div> -->
 {% endblock %}

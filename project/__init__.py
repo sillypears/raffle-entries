@@ -20,10 +20,14 @@ class Config(object):
     DATABASE_SCHEMA = url.path[1:]
 
 def create_app():
+    # Dumb work around because heroku forces "postgres" and sqlalchemy only knows "postgresql"
+    # So we replace the first instance of it if we find it
+    db_url = os.environ.get('DATABASE_URL')
+    if os.environ.get('DATABASE_URL').split(':')[0] == "postgres": 
+        db_url = os.environ.get('DATABASE_URL').replace('postgres', 'postgresql', 1)
     app = Flask(__name__)
-
-    app.config['SECRET_KEY'] = 'JDKLj3sddkadsa'
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['CONFIG'] = Config
 

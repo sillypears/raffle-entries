@@ -22,14 +22,14 @@ def index():
     e = database.get_entries(cur, current_user.id, conf)
     entries = e.fetchall()
     cur.close()
-    return render_template("index.html", percs=get_percs(), user=current_user, entries=entries, headers=e.description, total=len(entries))
+    return render_template("index.html", nav="index", percs=get_percs(), user=current_user, entries=entries, headers=e.description, total=len(entries))
 
 @main.route("/entry/<id>", methods=["GET"])
 def get_entry_by_id(id):
     cur = database.get_db(conf)
     entry = database.get_entry(cur, id, current_user.id,conf).fetchall()[0]
     cur.close()
-    return render_template("entry.html", percs=get_percs(), user=current_user, entry=entry)
+    return render_template("entry.html", nav="entry", percs=get_percs(), user=current_user, entry=entry)
 
 
 @main.route("/makers", methods=["GET"])
@@ -66,7 +66,7 @@ def makers():
                     makers[perc[0]]['total'] = perc[3]
                     makers[perc[0]]['mid'] = perc[4]
     cur.close()
-    return render_template("makers.html", percs=get_percs(), user=current_user, makers=makers, total=len(makers))
+    return render_template("makers.html", nav="makers", percs=get_percs(), user=current_user, makers=makers, total=len(makers))
 
 
 @main.route("/maker/id/<id>", methods=["GET"])
@@ -75,7 +75,7 @@ def get_maker_by_id(id):
     maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
     maker_entries = database.get_entries_by_maker(cur, id, current_user.id, conf).fetchall()
     cur.close()
-    return render_template("maker.html", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
+    return render_template("maker.html", nav="maker-id", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
 
 @main.route("/maker/name/<name>", methods=["GET"])
 def get_maker_by_name(name):
@@ -83,7 +83,7 @@ def get_maker_by_name(name):
     maker = database.get_maker_by_name(cur, name, current_user.id, conf).fetchall()[0]
     maker_entries = database.get_entries_by_maker(cur, maker[0], current_user.id, conf).fetchall()
     cur.close()
-    return render_template("maker.html", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
+    return render_template("maker.html", nav="maker-name", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
 
 
 @main.route("/add/maker", methods=["GET", "POST"])
@@ -103,7 +103,7 @@ def add_maker():
         cur.close()
         return redirect(url_for('main.index'))
     else:
-        return render_template("add-maker.html", percs=get_percs(), user=current_user)
+        return render_template("add-maker.html", nav="maker-add", percs=get_percs(), user=current_user)
 
 
 @main.route("/add/entry", methods=["GET", "POST"])
@@ -132,7 +132,7 @@ def add_entry():
         cur = database.get_db(conf)
         makers = database.get_makers(cur, current_user.id, conf).fetchall()
         cur.close()
-        return render_template("add-entry.html", percs=get_percs(), user=current_user, todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
+        return render_template("add-entry.html", nav="entry-add", percs=get_percs(), user=current_user, todayDate=datetime.now().strftime('%Y-%m-%d'), makers=makers)
 
 
 @main.route("/edit/entry/<id>", methods=["GET", "POST"])
@@ -142,7 +142,7 @@ def edit_entry(id):
         entry = database.get_entry(cur, id, current_user.id, conf).fetchall()[0]
         makers = database.get_makers(cur, current_user.id, conf).fetchall()
         cur.close()
-        return render_template("edit-entry.html",  percs=get_percs(), user=current_user, entry=entry, makers=makers)
+        return render_template("edit-entry.html", nav="entry-edit", percs=get_percs(), user=current_user, entry=entry, makers=makers)
     elif request.method == "POST":
         cur = database.get_db(conf)
         update = database.update_entry(cur, id, request.form, current_user.id, conf)
@@ -154,32 +154,47 @@ def edit_entry(id):
 def edit_maker(id):
     if request.method == "GET":
         db = database.get_db(conf)
-        maker = database.get_maker(db, id, current_user.id, conf).fetchall()[0]
+        maker = database.get_maker_by_id(db, id, current_user.id, conf).fetchall()[0]
         db.close()
-        return render_template("edit-maker.html", percs=get_percs(), user=current_user, e_id=id, maker=maker)
+        return render_template("edit-maker.html", nav="maker-edit", percs=get_percs(), user=current_user, id=id, maker=maker)
     elif request.method == "POST":
         db = database.get_db(conf)
-        update = database.update_maker(db, id, request.form, current_user.id, conf)
+        update = database.update_maker_by_id(db, id, request.form, current_user.id, conf)
         db.close()
         return redirect(url_for('main.index'))
 
 @main.route("/delete/entry/<id>", methods=["GET", "POST"])
 def del_entry(id):
     if request.method == "GET":
-        return render_template("del-entry.html", percs=get_percs(), user=current_user, id=id )
+        return render_template("del-entry.html", nav="entry-del", percs=get_percs(), user=current_user, id=id )
     if request.method == "POST":
         db = database.get_db(conf) 
         del_id = database.del_entry(db, id, current_user.id, conf)
         db.close()
         return redirect(url_for('main.index'))
 
-@main.route("/del-maker", methods=["GET", "POST"])
+@main.route("/delete/maker/<id>", methods=["GET", "POST"])
+def delete_maker(id):
+    if request.method == "GET":
+        db = database.get_db(conf)
+        makers = database.get_makers(db, current_user.id, conf).fetchall()
+        db.close()
+        return render_template('del-maker.html', nav="maker-del", percs=get_percs(), user=current_user, makers=makers)
+    elif request.method == "POST":
+        db = database.get_db(conf)
+        for deletee in request.form.getlist('del-maker'):
+            print(f"deleting {deletee}")
+            deleted = database.del_maker(db, int(deletee), current_user.id, conf)
+        db.close()
+        return redirect(url_for('main.ndex'))
+
+@main.route("/del-maker-secret-hidden-AJdneandDnsna", methods=["GET", "POST"])
 def del_makers():
     if request.method == "GET":
         db = database.get_db(conf)
         makers = database.get_makers(db, current_user.id, conf).fetchall()
         db.close()
-        return render_template('del-maker.html', percs=get_percs(), user=current_user, makers=makers)
+        return render_template('del-maker.html', nav="secret", percs=get_percs(), user=current_user, makers=makers)
     elif request.method == "POST":
         db = database.get_db(conf)
         for deletee in request.form.getlist('del-maker'):
