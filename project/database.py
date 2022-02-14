@@ -58,7 +58,7 @@ def get_entries_for_export(db, user_id, conf):
 def get_entry(db, id, user_id, conf):
     # check user_id matches entry
     cur = db.cursor()
-    cur.execute(f"SELECT * FROM all_entries WHERE id = {id}")
+    cur.execute(f"SELECT * FROM all_entries WHERE id = {id} AND user_id = {user_id}")
     return cur
 
 def toggle_entry(db, data, user_id, conf):
