@@ -1,3 +1,4 @@
+from venv import create
 from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for
 from flask_api import status
 from flask_login import login_required, current_user
@@ -288,3 +289,5 @@ if __name__ == "__main__":
         import database.build_db
         database.build_db.main(conf)
     app.run(threaded=True, debug=conf.DEBUG)
+else:
+    gunicorn_app = create_app()
