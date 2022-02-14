@@ -25,55 +25,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Adds
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/add/entry">New Entry</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/add/maker">New Maker</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Stuff
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/makers">Makers</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Secret
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/del-entry">Delete Entry</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a class="nav-link" href="/del-maker">Delete Maker</a>
-                        </li>
-                    </ul>
-                </li>
+
             </ul>
         </div>
-        <span class="navbar-text ms-auto me-2">
-            <span class="">
-                W: <span id="win-perc-navbar">{{ percs.winp }}</span>%
-            </span>
-            <span class="">
-                L: <span id="lose-perc-navbar">{{ percs.losep }}</span>%
-            </span>
-        </span>
     </nav>
     {% block content %}
     {% endblock %}

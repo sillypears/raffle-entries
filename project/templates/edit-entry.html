@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="mt-4 pt-4 container">
-    <form action="" method="POST">
+    <form action="" autocomplete="off" method="POST">
         <select id="maker" name="maker" class="select form-control">
             <option value=-1 name="maker-default">Maker</option>
 
@@ -16,18 +16,22 @@
         <input type="date" id="date" name="date" class="form-control" value="{{entry[3]}}" placeholder="Date" />
         <input type="textarea" id="notes" name="notes" class="form-control" value="{{ entry[4] }}"
             placeholder="Notes" />
-        <div class="row">
+        <div class="row mt-2">
             <div class="col-md-2">
                 <label for="result" class="form-check-label">Result</label>
-                <input type="checkbox" id="result" name="result" class="form-check-input" {% if entry[1] %} checked {% endif
-                %} />
-            </div>
-            <div class="col-md-10 text-right">
-                <button type="submit" class="btn btn-success">Edit Entry</button>
-                <a class="btn btn-danger" href="/delete/entry/{{entry[6]}}">Delete Entry</a>
+                <input type="checkbox" id="result" name="result" class="form-check-input" {% if entry[1] %} checked {%
+                    endif %} />
             </div>
         </div>
-
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success text-left">Update Entry</button>
+            </div>
+            <div class="col-md-6 float-end">
+                <a class="btn btn-danger float-end" href="/delete/entry/{{entry[6]}}">Delete Entry</a>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}

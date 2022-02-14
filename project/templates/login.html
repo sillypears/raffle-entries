@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mt-4 pt-4 container">
+
+  <h3 class="title">Login</h3>
+  <form method="POST" action="/login">
+    <div class="field">
+      <div class="control">
+        <input class="input" type="name" name="name" placeholder="username" autofocus="">
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="control">
+        <input class="input" type="password" name="password" placeholder="Your Password">
+      </div>
+    </div>
+    <div class="field">
+      <label class="checkbox">
+        <input type="checkbox" name="remember">
+        Remember me
+      </label>
+    </div>
+    <button class="btn btn-success">Login</button>
+  </form>
+</div>
+{% endblock %}

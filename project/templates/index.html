@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="my-2 pt-5 container-fluid">
+    <div class="row">
+        <h1 class="col-lg-11 ms-auto h1"> hi, you entered <span id="total-perc">{{ total }}</span> raffle{% if total !=1 %}s{% endif %}{% if total > 1 and percs.winp == 0 %}, and you lost them all :) {% endif %}</h1>
+        <span class="me-2 col-lg-1 me-auto hidden spoiler-text"><span id="win-perc-num" name="win-perc-num" class="win-perc-num" >{{ percs.win }}</span>/<span id="lose-perc-num" name="lose-perc-num" class="lose-perc-num">{{ percs.lose }}</span></span>
+    </div>
+    <div class="row float-left">
+        {% for entry in entries %}
+        <div class="col-lg-2 mt-2 my-2 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <div class="card-title">
+                        <div class="row">
+                            <span class="col-md-10 font-weight-bold text-align-center h5"><a class="link-info" href="/maker/id/{{entry[7]}}">{{ entry[0] }}</a></span>
+                            {% if entry[1] %}
+                            <span id="result-{{ entry[6]}}" name="result" class="result result-green rounded col-md-2 font-weight-bold p-1 text-center">W</span>
+                            {% else %}
+                            <span id="result-{{ entry[6]}}" name="result" class="result result-red rounded col-md-2 font-weight-bold p-1 text-center">L</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-text ">
+                        <div class="text-right muted small">
+                            <a class="link-dark" href="/entry/{{ entry[6]}}">{{entry[3] }}</a>
+                        </div>
+                        <div class=" fs-6">
+                            {{ entry[4] }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col text-center">
+                            <a id="flip-result-{{entry[6]}}" class="btn btn-secondary"
+                                onclick='toggleResult({{ entry[6] }}, {% if entry[1] == True %}1{% else %}0{% endif %})'>🐬Result</a>
+                            <a class="btn btn-warning " href="/edit/entry/{{ entry[6] }}">Edit</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% if loop.index % 6 == 0 %}
+        </div>
+
+        <div class="row float-left">
+        {% endif %}
+        {% endfor %}
+        {% if total % 6 != 0 %}
+            {% for i in range(0, total%6) %}
+            <div class="col-lg-2 my-1 mx-auto">
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

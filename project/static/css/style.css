@@ -1,0 +1,31 @@
+body {
+    background-color: rgb(230, 225, 225);
+}
+.result-green {
+    background-color: rgb(183, 243, 183);
+}
+
+.result-red {
+    background-color: rgb(247, 191, 191);
+}
+
+.makers-card {
+    width: 18rem;
+}
+
+.card-text {
+    min-height: 75px;
+}
+.spoiler-text {
+    color: transparent;
+    cursor: grab;
+    user-select: none;
+    transition: background 0.3s ease 0.2s, color 0.2s ease 0.25s;
+}
+
+.spoiler-text:hover,
+.spoiler-text:focus {
+    background: #e8e8e8;
+    color: inherit;
+}
+
