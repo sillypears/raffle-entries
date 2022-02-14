@@ -29,7 +29,10 @@ def index():
 @login_required
 def get_entry_by_id(id):
     cur = database.get_db(conf)
-    entry = database.get_entry(cur, id, current_user.id,conf).fetchall()[0]
+    try:
+        entry = database.get_entry(cur, id, current_user.id,conf).fetchall()[0]
+    except Exception as e:
+        entry = ["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin",]
     cur.close()
     return render_template("entry.html", nav="entry", percs=get_percs(), user=current_user, entry=entry)
 
@@ -75,8 +78,13 @@ def makers():
 @login_required
 def get_maker_by_id(id):
     cur = database.get_db(conf)
-    maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
-    maker_entries = database.get_entries_by_maker(cur, id, current_user.id, conf).fetchall()
+    try:
+        maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
+        maker_entries = database.get_entries_by_maker(cur, id, current_user.id, conf).fetchall()
+
+    except Exception as e:
+        maker = ["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"]
+        maker_entries = [["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"]]
     cur.close()
     return render_template("maker.html", nav="maker-id", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries)
 
