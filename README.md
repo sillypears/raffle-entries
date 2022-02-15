@@ -21,3 +21,4 @@ Setting up [Postgres on Heroku](https://devcenter.heroku.com/articles/heroku-pos
 
 ![A bad example](/docs/config_vars_heroku.png)
 
+https://big-silly-entrered.herokuapp.com/ yes this url is all named dumb because typing is hard and I didn't care to fix it
