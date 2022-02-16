@@ -2,9 +2,9 @@
 {% block content %}
 
 <div class="mt-4 pt-4 container">
-    <form action="" autocomplete="off" method="POST">
+    <form class="needs-validation" action="" autocomplete="off" method="POST">
         <select id="maker" name="maker" class="select form-control">
-            <option value=-1 name="maker-default">Maker</option>
+            <option value="" disabled name="maker-default">Maker</option>
 
             {% for m in makers %}
             <option value={{ m[0] }} name="maker-{{ m[1] }}" {% if m[0]==entry[7] %} selected {% endif %}>{{ m[2] }}
@@ -12,8 +12,8 @@
             {% endfor %}
         </select>
         <input type="textbox" id="link" name="link" class="form-control" value="{{ entry[5] }}"
-            placeholder="Raffle Link" />
-        <input type="date" id="date" name="date" class="form-control" value="{{entry[3]}}" placeholder="Date" />
+            placeholder="Raffle Link" required/>
+        <input type="date" id="date" name="date" class="form-control" value="{{entry[3]}}" placeholder="Date"required />
         <input type="textarea" id="notes" name="notes" class="form-control" value="{{ entry[4] }}"
             placeholder="Notes" />
         <div class="row mt-2">

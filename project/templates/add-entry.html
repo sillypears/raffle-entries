@@ -2,16 +2,16 @@
 {% block content %}
 <div class="mt-4 pt-4 container">
     <div class="">
-        <form action="" method="POST"  autocomplete="off">
-                <select id="maker" name="maker" class="select form-control">
-                    <option value=-1 name="maker-default" selected>Maker</option>
+        <form class="needs-validation" action="" method="POST"  autocomplete="off">
+                <select id="maker" name="maker" class="select form-control" required>
+                    <option value="" name="maker-default" disabled selected>Maker</option>
 
                     {% for m in makers %}
                     <option value={{ m[0] }} name="maker-{{ m[1] }}">{{ m[2] }}</option>
                     {% endfor %}
                 </select>
-                <input type="textbox" id="link" name="link" class="form-control" placeholder="Raffle Link" />
-                <input type="date" id="date" name="date" class="form-control" value="{{ todayDate }}" placeholder="Date" />
+                <input type="textbox" id="link" name="link" class="form-control" placeholder="Raffle Link" required/>
+                <input type="date" id="date" name="date" class="form-control" value="{{ todayDate }}" placeholder="Date" required/>
                 <input type="textarea" id="notes" name="notes" class="form-control" placeholder="Notes" />
                 <label for="result" class="form-check-label">Result</label>
                 <input type="checkbox" id="result" name="result" class="form-check-input" placeholder="" />
