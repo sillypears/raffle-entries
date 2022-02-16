@@ -11,6 +11,7 @@ import json
 from project import create_app
 from . import db
 from . import database
+from .models import User, Entry, Maker
 
 main = Blueprint('main', __name__)
 
@@ -23,6 +24,7 @@ def index():
     e = database.get_entries(cur, current_user.id, conf)
     entries = e.fetchall()
     cur.close()
+    # test = Entry.query.filter_by(user_id=current_user.id).all()
     return render_template("index.html", nav="index", percs=get_percs(), user=current_user, entries=entries, headers=e.description, total=len(entries))
 
 @main.route("/entry/<id>", methods=["GET"])
@@ -41,35 +43,45 @@ def get_entry_by_id(id):
 def makers():
     makers = {}
     cur = database.get_db(conf)
-    ms = database.get_makers_raffles(cur, conf).fetchall()
+    mss = Maker.query.filter_by(user_id=current_user.id).all()
+    ms = database.get_makers_raffles(cur, current_user.id, conf).fetchall()
     for maker in ms:
-        mpercs = database.get_percent_by_id(cur, maker[0], current_user.id, conf).fetchall()
-        for perc in mpercs:
-            if perc[0] in makers.keys() and len(perc) > 0:
-                if perc[2]:
-                    makers[perc[0]]['win'] += perc[3]
-                    makers[perc[0]]['total'] += perc[3]
+        if maker[4] > 0:
+            mpercs = database.get_percent_by_mid(cur, maker[0], current_user.id, conf).fetchall()
+            for perc in mpercs:
+                if perc[0] in makers.keys() and len(perc) > 0:
+                    if perc[2]:
+                        makers[perc[0]]['win'] += perc[3]
+                        makers[perc[0]]['total'] += perc[3]
 
-                else:
-                    makers[perc[0]]['lose'] += perc[3]
-                    makers[perc[0]]['total'] += perc[3]
+                    else:
+                        makers[perc[0]]['lose'] += perc[3]
+                        makers[perc[0]]['total'] += perc[3]
 
-            elif len(perc) > 0:
-                if perc[2]:
-                    makers[perc[0]] = {}
-                    makers[perc[0]]['win'] = perc[3]
-                    makers[perc[0]]['lose'] = 0
-                    makers[perc[0]]['total'] = perc[3]
-                    makers[perc[0]]['display'] = perc[1]
-                    makers[perc[0]]['mid'] = perc[4]
+                elif len(perc) > 0:
+                    if perc[2]:
+                        makers[perc[0]] = {}
+                        makers[perc[0]]['win'] = perc[3]
+                        makers[perc[0]]['lose'] = 0
+                        makers[perc[0]]['total'] = perc[3]
+                        makers[perc[0]]['display'] = perc[1]
+                        makers[perc[0]]['mid'] = perc[4]
 
-                else:
-                    makers[perc[0]] = {}
-                    makers[perc[0]]['lose'] = perc[3]
-                    makers[perc[0]]['win'] = 0
-                    makers[perc[0]]['display'] = perc[1]
-                    makers[perc[0]]['total'] = perc[3]
-                    makers[perc[0]]['mid'] = perc[4]
+                    else:
+                        makers[perc[0]] = {}
+                        makers[perc[0]]['lose'] = perc[3]
+                        makers[perc[0]]['win'] = 0
+                        makers[perc[0]]['display'] = perc[1]
+                        makers[perc[0]]['total'] = perc[3]
+                        makers[perc[0]]['mid'] = perc[4]
+        else:
+            makers[maker[1]] = {}
+            makers[maker[1]]['win'] = 0
+            makers[maker[1]]['lost'] = 0
+            makers[maker[1]]['total'] = 0
+            makers[maker[1]]['display'] = maker[2]
+            makers[maker[1]]['mid'] = maker[0]
+            
     cur.close()
     return render_template("makers.html", nav="makers", percs=get_percs(), user=current_user, makers=makers, total=len(makers))
 
@@ -276,10 +288,10 @@ def get_percs():
         return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
 
 
-def get_percs_by_id(id):
+def get_percs_by_maker_id(maker_id):
     try:
         db = database.get_db(conf)
-        p = database.get_percents(db, id, current_user.id, conf)
+        p = database.get_percents_by_mid(db, maker_id, current_user.id, conf)
         pes = p.fetchall()
         percs = {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
         for perc in pes:

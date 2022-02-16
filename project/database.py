@@ -25,9 +25,9 @@ def get_makers(db, user_id, conf):
     cur.execute(f"SELECT id, name, display, instagram FROM makers WHERE user_id = {user_id} ORDER BY name ASC")
     return cur
 
-def get_makers_raffles(db, conf):
+def get_makers_raffles(db, user_id, conf):
     cur = db.cursor()
-    cur.execute("SELECT m.id, m.name, m.display, m.instagram, count(e.id) FROM makers m LEFT JOIN entries e ON e.maker_id = m.id GROUP BY m.id HAVING COUNT(e.id) > 0 ORDER BY m.name ASC")
+    cur.execute(f"SELECT m.id, m.name, m.display, m.instagram, count(e.id) as total FROM makers m LEFT JOIN entries e ON e.maker_id = m.id WHERE m.user_id = {user_id} GROUP BY m.id ORDER BY m.name ASC")
     return cur
 
 def get_maker_by_id(db, id, user_id, conf):
@@ -73,10 +73,10 @@ def get_percents(db, user_id, conf):
     cur.execute(f"SELECT result, COUNT(result) FROM entries WHERE user_id = {user_id} GROUP BY result")
     return cur
 
-def get_percent_by_id(db, id, user_id, conf):
+def get_percent_by_mid(db, mid, user_id, conf):
     # check userid exists for entry
     cur = db.cursor()
-    cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {id} GROUP BY m.name,e.result, m.display, m.id")
+    cur.execute(f"SELECT m.name, m.display, e.result, COUNT(e.result), m.id FROM entries e LEFT JOIN makers m ON m.id = e.maker_id WHERE e.maker_id = {mid} AND e.user_id = {user_id} GROUP BY m.name,e.result, m.display, m.id")
     return cur
 
 def add_entry(db, data, user_id, conf):

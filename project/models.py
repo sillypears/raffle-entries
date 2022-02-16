@@ -31,4 +31,4 @@ class Entry(db.Model):
     notes = db.Column(db.String(500))
     result = db.Column(db.Boolean, server_default=expression.true(), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    
+
