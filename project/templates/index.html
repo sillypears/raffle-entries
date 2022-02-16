@@ -49,11 +49,12 @@
         <div class="row float-left">
         {% endif %}
         {% endfor %}
-        {% if total % 6 != 0 %}
-            {% for i in range(0, total%6) %}
-            <div class="col-lg-2 my-1 mx-auto">
-            </div>
-            {% endfor %}
+
+            {% if total % 6 != 0 %}
+                {% for i in range(0, ((6 - total%6+total))|int - total ) %}
+                <div class="col-lg-2 my-1 mx-auto">&nbsp;
+                </div>
+                {% endfor %}
         {% endif %}
     </div>
 </div>

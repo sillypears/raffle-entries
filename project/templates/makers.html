@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="my-5 pt-4 container">
+<div class="my-5 container-fluid">
     <h1 class="h1">You like {{ total }} maker{% if total != 1 %}s{%endif%}</h1>
-    <div class="row">
+    <div class="row float-left">
     {% for maker in makers %}
-        <div class="col-3">
-            <div class="card makers-card my-4">
+        <div class="col-lg-2 mt-2 my-2 mx-auto ">
+            <div class="card shadow-lg">
                 <div class="card-header d-flex align-items-center ">
-                    <a href="/maker/id/{{ makers[maker]['mid']}}">{{ makers[maker]['display'] }}</a>
+                    <a class="text-truncate" href="/maker/id/{{ makers[maker]['mid']}}">{{ makers[maker]['display'] }}</a>
                 </div>
                 <div class="card-body">
                     {% if makers[maker]['total'] > 0 %}
@@ -38,11 +38,17 @@
                 </div>
             </div>
         </div>
-    {% if loop.index % 4 == 0 %} 
+    {% if loop.index % 6 == 0 %} 
     </div>
-    <div class="row">
+    <div class="row float-left">
     {% endif %}
     {% endfor %}
+    {% if total % 6 != 0 %}
+    {% for i in range(0, ((6 - total%6+total))|int - total ) %}
+        <div class="col-lg-2 my-1 mx-auto">&nbsp;
+        </div>
+    {% endfor %}
+{% endif %}
     </div>
 </div>
 {% endblock %}
