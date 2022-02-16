@@ -97,14 +97,37 @@
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <footer class="footer fixed-bottom bg-dark">
         <div class="row m-1">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <a class="link-light" href="https://github.com/sillypears/raffle-entries" target="_blank">GITHUB</a>
             </div>
-            <div class="col text-muted text-end">
+            <div class="col-lg-4">
+                <div id="secret" class="font-monospace text-center" clickable data-bs-toggle="modal" data-bs-target="#hi-there">
+                    hi
+                </div>
+            </div>
+            <div class="col-lg-4 text-muted text-end">
                 {% if nav == "index" %}Export <a class="link-light" href="/export/csv">csv</a> | <a class="link-light" href="/export/json">json</a>{% endif %}
             </div>
         </div>
     </footer>
+    <div class="modal fade bg-dark" id="hi-there" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Hi there :)</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Never expected anyone to actually use this.</p>
+              <p>It was only ever a dumb thing to prove a point to a friend.</p>
+              <p>If you are a curious cat, feel free to DM me, pears#0001 :P</p>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+      
 </body>
 
 </html>
