@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="mt-4 pt-4 container">
-    <h1 class="h1">You like {{ total }} maker{% if total != 1 %}s{%endif%}</h1> and this shit is broken
+    <h1 class="h1">You like {{ total }} maker{% if total != 1 %}s{%endif%}</h1>
     <div class="row">
     {% for maker in makers %}
         <div class="col-3">
@@ -13,28 +13,26 @@
                 <div class="card-body">
                     {% if makers[maker]['total'] > 0 %}
                         <div class="">Wins: {{ '{0:0.2f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}%</div>
-                        <div class="">Losses: {{ '{0:0.2f}'.format(makers[maker]['lose'] / makers[maker]['total'] * 100) }}%
+                        <div class="">Losses: {{ '{0:0.2f}'.format(makers[maker]['lose'] / makers[maker]['total'] * 100) }}%</div>
                     {%else %}
                         <div class="">Wins: 0.00%</div>
                         <div class="">Losses: 0.00%</div>
                     {%endif%}
-                    </div>
 
                 </div>
                 <div class="card-footer">
                     <div class="progress">
                         {% if makers[maker]['total'] > 0 %}
-
                         <div class="progress-bar bg-success" role="progressbar"
                             style="width: {{ '{0:0.0f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}%;"
                             aria-valuenow="{{ '{0:0.0f}'.format(makers[maker]['win'] / makers[maker]['total'] * 100) }}"
                             aria-valuemin="0" aria-valuemax="100">
-                        {%else %}
-                        <div class="progress-bar bg-success" role="progressbar"
-                        style="width: 0%;"
-                        aria-valuenow="0"
-                        aria-valuemin="0" aria-valuemax="100">
-                        {%endif%}
+                        {% else %}
+                            <div class="progress-bar bg-success" role="progressbar"
+                            style="width: 0.00%;"
+                            aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100">
+                        {% endif %}
                         </div>
                     </div>
                 </div>
