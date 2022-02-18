@@ -42,7 +42,7 @@ def get_maker_by_name(db, name, user_id, conf):
 
 def get_entries(db, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"SELECT * FROM all_entries WHERE user_id = {user_id} ORDER BY epoch DESC, id ASC")
+    cur.execute(f"SELECT * FROM all_entries WHERE user_id = {user_id} ORDER BY epoch DESC, id DESC")
     return cur
 
 def get_entries_by_maker(db, id, user_id, conf):
