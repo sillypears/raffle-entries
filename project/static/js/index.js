@@ -33,10 +33,8 @@ $(function () {
         this.innerHTML = moment.unix(this.textContent).format('Y-MM-DD')
     })
     var myModal = document.getElementById('hi-there')
-    var myInput = document.getElementById('myInput')
     
     myModal.addEventListener('shown.bs.modal', function () {
-      myInput.focus()
     })
     
 })
