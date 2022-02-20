@@ -94,12 +94,14 @@ def get_maker_by_id(id):
         maker = database.get_maker_by_id(cur, id, current_user.id, conf).fetchall()[0]
         maker_entries = database.get_entries_by_maker(cur, id, current_user.id, conf).fetchall()
         maker_wins = [win[1] for win in maker_entries if win[1]]
+        win_perc = 0 if len(maker_entries) < 1 else len(maker_wins)/len(maker_entries)
     except Exception as e:
         maker = ["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"]
         maker_entries = [["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"],["Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin","Naughty Gremlin"]]
         maker_wins = 69
+        win_perc = 420
     cur.close()
-    return render_template("maker.html", nav="maker-id", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries, maker_wins=len(maker_wins))
+    return render_template("maker.html", nav="maker-id", percs=get_percs(), user=current_user, maker=maker, maker_es=maker_entries, maker_wins=len(maker_wins), win_perc=win_perc)
 
 @main.route("/maker/name/<name>", methods=["GET"])
 @login_required
