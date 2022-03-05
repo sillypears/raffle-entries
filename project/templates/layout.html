@@ -81,6 +81,9 @@
         integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    {% if nav in ["entry-add"] %}
+    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
+    {% endif%}
     <footer class="footer fixed-bottom bg-dark">
         <div class="row m-1">
             <div class="col-lg-4">
