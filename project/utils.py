@@ -33,7 +33,6 @@ def export_raffles(filetype='csv'):
             temp_data = {}
             for col in colnames:
                 temp_data[col] = data[col]
-            print(temp_data)
             export_data['makers'][data['name']] = temp_data
         db_data = database.get_entries_for_export(db, current_user.id, conf)
         colnames = [desc[0] for desc in db_data.description]
