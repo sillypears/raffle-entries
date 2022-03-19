@@ -22,8 +22,19 @@ def export_raffles(filetype='csv'):
     print(filetype)
     if filetype == 'json':
         export_file = None
-        export_data = {}
+        export_data = {
+            'makers': {},
+            'entries': {}
+        }
         db = database.get_db(conf)
+        maker_data = database.get_makers_for_export(db, current_user.id, conf)
+        colnames = [desc[0] for desc in maker_data.description]
+        for data in maker_data:
+            temp_data = {}
+            for col in colnames:
+                temp_data[col] = data[col]
+            print(temp_data)
+            export_data['makers'][data['name']] = temp_data
         db_data = database.get_entries_for_export(db, current_user.id, conf)
         colnames = [desc[0] for desc in db_data.description]
         for data in db_data:
@@ -33,7 +44,7 @@ def export_raffles(filetype='csv'):
                     temp_data[col] = str(data[col])
                 else:
                     temp_data[col] = data[col]
-            export_data[str(data['id'])] = temp_data
+            export_data['entries'][str(data['id'])] = temp_data
         db.close()
         return make_response(export_data, 200)
     elif filetype == 'csv':

@@ -50,6 +50,11 @@ def get_entries_by_maker(db, id, user_id, conf):
     cur.execute(f"SELECT * FROM all_entries WHERE mid = {id} AND user_id = {user_id} ORDER BY epoch DESC, id DESC ")
     return cur
 
+def get_makers_for_export(db, user_id, conf):
+    cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute(f"SELECT * FROM makers WHERE user_id = {user_id} ORDER BY display ASC, id DESC")
+    return cur
+
 def get_entries_for_export(db, user_id, conf):
     cur = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute(f"SELECT * FROM all_entries WHERE user_id = {user_id} ORDER BY epoch DESC, id DESC")
