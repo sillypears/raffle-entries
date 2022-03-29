@@ -49,7 +49,8 @@ def create_app():
             if request.url.startswith('http://'):
                 url = request.url.replace('http://', 'https://', 1)
                 code = 301
-                return redirect(url, code=code)   
+                return redirect(url, code=code)
+                  
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)

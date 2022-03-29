@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="my-5 container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm my-4">
+                <div class="card-body">
+                    <div>
+                        Wins: {{ percs.win }}
+                    </div>
+                    <div>
+                        Losses: {{ percs.lose }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm my-4">
+                <div class="card-body">
+                    <div>
+                        Entries: {{ totals.entries }}
+                    </div>
+                    <div>
+                        Makers: {{ totals.makers }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm my-4">
+                <div class="card-title m-4">
+                    Top 3 Makers
+                </div>
+                <div class="card-body">
+                    {% for maker in top_makers %}
+                    <div>
+                    {{ maker[0] }}: {{ maker[1] }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm my-4">
+                <div class="card-title m-4">
+                    Top 3 Winning Makers
+                </div>
+                <div class="card-body">
+                    {% for entry in top_winners %}
+                    <div>
+                    {{ entry[0] }}: {{ entry[1] }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-danger">Logout</button>     
+    </div>
+</div>
+{% endblock %}
