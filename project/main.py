@@ -285,6 +285,12 @@ def get_entries_by_maker():
     db.close() 
     return {'status': 'OK', 'data': entries}
 
+@main.route('/calendar', methods=["GET"])
+def get_calendar():
+    db = database.get_db(conf)
+    e = database.get_raffles_for_calendar_month(db, datetime.now(), current_user.id, conf)
+    print(e)
+    return render_template("calendar.html", nav="calendar", percs=get_percs(current_user.id), user=current_user, entries=e)
 
 def get_percs(user_id):
     try:

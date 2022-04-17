@@ -3,6 +3,8 @@ import psycopg2
 from datetime import datetime
 import re, json
 
+from project import Config
+
 def get_db(conf):
     db = psycopg2.connect(
         user = conf.DATABASE_USER,
@@ -143,3 +145,55 @@ def check_user_to_entry(db, id, user_id, conf):
         pass
     cur.close()
     return True if entry_id == user_id else False
+
+def get_raffles_for_calendar_month(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+    """Get all of the entries for a calendar month
+
+    Args:
+        db (psycopg2.connection): db object
+        date (datetime.date): date object with the month
+        user_id (int): user id to look up entries for
+        conf (Config): config object
+
+    Returns:
+        psycopg2.cursor: returns all the raffles for the month
+    """
+
+    cur = db.cursor()
+    cur.execute(f"SELECT e.id, e.date, e.maker, e.mid FROM all_entries e WHERE e.user_id = {user_id} AND EXTRACT(MONTH from e.date) = {date.month} AND EXTRACT(YEAR from e.date) = {date.year} ORDER BY e.id DESC")
+    cur.close()
+    return cur
+    
+def get_raffles_for_date(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+    """Get raffles for a specific date
+
+    Args:
+        db (psycopg2.connection): The db to generate a cursor
+        date (datetime.date): The date to search for
+        user_id (int): User id
+        conf (Config): Configurations
+
+    Returns:
+        psycopg2.cursor: All of the results for the date
+    """
+    cur = db.cursor()
+    cur.execute(f"SELECT e.id, e.date, e.maker, e.mid, e.notes FROM all_entries e WHERE e.user_id = {user_id} AND e.date = {date}")
+    cur.close()
+    return cur
+
+def get_raffles_for_date_expanded(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+    """Get raffles for a specific date
+
+    Args:
+        db (psycopg2.connection): The db to generate a cursor
+        date (datetime.date): The date to search for
+        user_id (int): User id
+        conf (Config): Configurations
+
+    Returns:
+        psycopg2.cursor: All of the results for the date
+    """
+    cur = db.cursor()
+    cur.execute(f"SELECT * FROM all_entries e WHERE e.user_id = {user_id} AND e.date = '{date}' ORDER BY e.id DESC")
+    cur.close()
+    return cur

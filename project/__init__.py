@@ -12,7 +12,7 @@ db = SQLAlchemy()
 url = urlparse(os.environ.get('DATABASE_URL'))
 
 class Config(object):
-    DEBUG = os.environ.get('FLASK_DEBUG')
+    DEBUG = True if os.environ.get('FLASK_ENV') == "development" else False
     DATABASE_HOST = url.hostname
     DATABASE_PORT = url.port
     DATABASE_USER = url.username
