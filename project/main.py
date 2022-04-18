@@ -301,7 +301,7 @@ def get_calendar():
     db = database.get_db(conf)
     e = database.get_raffles_for_calendar_month(db, find_date, current_user.id, conf).fetchall()
     db.close()
-    cal = build_calendar(month=find_date.month, year=find_date.month)
+    cal = build_calendar(month=find_date.month, year=find_date.year)
     entries = {}
     for entry in e:
         if entries.get(entry[1].day):
