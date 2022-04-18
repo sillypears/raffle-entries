@@ -36,7 +36,7 @@
             </div>
             <div class="entries">
                 {% for entry in entries[i[0]] %}
-                <div id="entry-{{entry[0]}}" class="card text-center text-white my-1 bg-dark bg-gradient" >
+                <div id="entry-{{entry[0]}}" class="card text-center text-white my-1 {% if entry[4] == 1 %} bg-success {% else %} bg-danger {% endif %} bg-gradient" >
                     <div class="card-block p-1">
                         <h5 class="card-title text-trucate">{{ entry[3] }}</h5>
                         <a class="card-text text-white" href="/entry/{{entry[0]}}" title="{{entry[3]}}" >{{entry[2]}}</a>
