@@ -29,11 +29,13 @@
     <div class="row">
     {% for i in calendar %}
         <div class="col border border-dark rounded">
-            <div class="date">
                 {% if i[0] != 0 %}
-                    {{ i[0] }}
+                <div class="row border-bottom border-dark">
+                    <div class="col">
+                        {{ i[0] }}
+                    </div>
+                </div>
                 {% endif %}
-            </div>
             <div class="entries">
                 {% for entry in entries[i[0]] %}
                 <div id="entry-{{entry[0]}}" class="card text-center text-white my-1 {% if entry[4] == 1 %} bg-success {% else %} bg-danger {% endif %} bg-gradient" >
