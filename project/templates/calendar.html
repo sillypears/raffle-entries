@@ -2,7 +2,55 @@
 {% block content %}
 
 <div class="mt-4 pt-4 container">
-    {%= entries %}
+    <div class="row">
+        <div class="col-md-3">
+            &nbsp;
+        </div>
+        <div class="col-md-1 d-flex align-items-center">
+            <a href="/calendar?year={{ links.prev.year }}&month={{ links.prev.month}}"><<</a>
+        </div>
+        <div class="col-md-4 text-center h1">
+            {{ header.month }} {{ header.year }}
+        </div>
+        <div class="col-md-1 d-flex align-items-center">
+            <a href="/calendar?year={{ links.next.year }}&month={{ links.next.month}}">>></a>
+        </div>
+        <div class="col-md-3">
+            &nbsp;
+        </div>
+    </div>
+    <div class="row">
+        {% for day in days %}
+        <div class="col">
+            {{ day }}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+    {% for i in calendar %}
+        <div class="col border border-dark">
+            <div class="date">
+                {% if i[0] != 0 %}
+                    {{ i[0] }}
+                {% endif %}
+            </div>
+            <div class="entries">
+                {% for entry in entries[i[0]] %}
+                <div id="entry-{{entry[0]}}" class="card text-center text-white my-1 bg-dark bg-gradient" >
+                    <div class="card-block p-1">
+                        <h5 class="card-title text-trucate">{{ entry[3] }}</h5>
+                        <a class="card-text text-white" href="/entry/{{entry[0]}}" title="{{entry[3]}}" >{{entry[2]}}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% if loop.index % 7 == 0 %}
+    </div>
+    <div class="row">
+        {% endif %}
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}
 <!-- (Column(name='maker', type_code=1043), Column(name='result', type_code=16), Column(name='epoch', type_code=23), Column(name='date', type_code=1082), Column(name='notes', type_code=25), Column(name='info', type_code=1043), Column(name='id', type_code=23), Column(name='mid', type_code=23), Column(name='shortname', type_code=1043)) -->

@@ -36,7 +36,7 @@ $(function () {
     
     myModal.addEventListener('shown.bs.modal', function () {
     })
-    
+    document.cookie = `tz_info=${new Date().getTimezoneOffset()}`
 })
 
 function toggleResult(id, result) {

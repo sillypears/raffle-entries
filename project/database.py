@@ -3,8 +3,6 @@ import psycopg2
 from datetime import datetime
 import re, json
 
-from project import Config
-
 def get_db(conf):
     db = psycopg2.connect(
         user = conf.DATABASE_USER,
@@ -143,10 +141,9 @@ def check_user_to_entry(db, id, user_id, conf):
         entry_id = int(cur.fetchall()[0][0])
     except:
         pass
-    cur.close()
     return True if entry_id == user_id else False
 
-def get_raffles_for_calendar_month(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+def get_raffles_for_calendar_month(db, date, user_id, conf):
     """Get all of the entries for a calendar month
 
     Args:
@@ -160,11 +157,10 @@ def get_raffles_for_calendar_month(db: psycopg2.connection, date: datetime.date,
     """
 
     cur = db.cursor()
-    cur.execute(f"SELECT e.id, e.date, e.maker, e.mid FROM all_entries e WHERE e.user_id = {user_id} AND EXTRACT(MONTH from e.date) = {date.month} AND EXTRACT(YEAR from e.date) = {date.year} ORDER BY e.id DESC")
-    cur.close()
+    cur.execute(f"SELECT e.id, e.date, e.notes, e.maker, e.mid FROM all_entries e WHERE e.user_id = {user_id} AND EXTRACT(MONTH from e.date) = {date.month} AND EXTRACT(YEAR from e.date) = {date.year} ORDER BY e.id DESC")
     return cur
     
-def get_raffles_for_date(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+def get_raffles_for_date(db, date, user_id, conf):
     """Get raffles for a specific date
 
     Args:
@@ -178,10 +174,9 @@ def get_raffles_for_date(db: psycopg2.connection, date: datetime.date, user_id: 
     """
     cur = db.cursor()
     cur.execute(f"SELECT e.id, e.date, e.maker, e.mid, e.notes FROM all_entries e WHERE e.user_id = {user_id} AND e.date = {date}")
-    cur.close()
     return cur
 
-def get_raffles_for_date_expanded(db: psycopg2.connection, date: datetime.date, user_id: int, conf: Config) -> psycopg2.cursor:
+def get_raffles_for_date_expanded(db, date, user_id, conf):
     """Get raffles for a specific date
 
     Args:
@@ -195,5 +190,4 @@ def get_raffles_for_date_expanded(db: psycopg2.connection, date: datetime.date, 
     """
     cur = db.cursor()
     cur.execute(f"SELECT * FROM all_entries e WHERE e.user_id = {user_id} AND e.date = '{date}' ORDER BY e.id DESC")
-    cur.close()
     return cur

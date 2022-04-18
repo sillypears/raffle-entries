@@ -4,10 +4,12 @@ from flask_api import status
 from flask_login import login_required, current_user
 import math
 from pprint import pprint
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil import relativedelta
 import os
 from urllib.parse import urlparse
 import json
+import calendar
 from project import create_app
 from . import db
 from . import database
@@ -287,10 +289,36 @@ def get_entries_by_maker():
 
 @main.route('/calendar', methods=["GET"])
 def get_calendar():
+    try:
+        t_delta = timedelta(minutes=int(request.cookies['tz_info'])*-1)
+        dutc_now = datetime.utcnow()
+        if request.args:
+            find_date = datetime(int(request.args['year']), int(request.args['month']), int((dutc_now + t_delta).day))
+        else:
+            find_date = datetime.utcnow() + timedelta(minutes=int(request.cookies['tz_info'])*-1)
+    except:
+        find_date = dutc_now + timedelta(minutes=int(request.cookies['tz_info'])*-1)
     db = database.get_db(conf)
-    e = database.get_raffles_for_calendar_month(db, datetime.now(), current_user.id, conf)
-    print(e)
-    return render_template("calendar.html", nav="calendar", percs=get_percs(current_user.id), user=current_user, entries=e)
+    e = database.get_raffles_for_calendar_month(db, find_date, current_user.id, conf).fetchall()
+    db.close()
+    cal = build_calendar(month=find_date.month, year=find_date.month)
+    entries = {}
+    for entry in e:
+        if entries.get(entry[1].day):
+            entries[entry[1].day].append(entry)
+        else:
+            entries[entry[1].day] = []
+            entries[entry[1].day].append(entry)
+    return render_template(
+        "calendar.html", 
+        nav="calendar", 
+        percs=get_percs(current_user.id), 
+        user=current_user, entries=entries, 
+        calendar=cal, 
+        header={'year': find_date.year, 'month': find_date.strftime('%B')}, 
+        days=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        links={'next': {'year': (find_date + relativedelta.relativedelta(months=1)).year, 'month': (find_date + relativedelta.relativedelta(months=1)).month}, 'prev': {'year': (find_date - relativedelta.relativedelta(months=1)).year, 'month': (find_date - relativedelta.relativedelta(months=1)).month} }
+    )
 
 def get_percs(user_id):
     try:
@@ -333,6 +361,8 @@ def get_percs_by_maker_id(maker_id, user_id):
     except:
         return {'win': 0, 'lose': 0, 'winp': 0, 'losep': 0, 'total': 0}
 
+def build_calendar(month: int, year: int) -> dict:
+    return calendar.Calendar().itermonthdays2(year=year, month=month)
 
 
 if __name__ == "__main__":
