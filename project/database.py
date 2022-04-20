@@ -157,7 +157,7 @@ def get_raffles_for_calendar_month(db, date, user_id, conf):
     """
 
     cur = db.cursor()
-    cur.execute(f"SELECT e.id, e.date, e.notes, e.maker, e.result, e.mid  FROM all_entries e WHERE e.user_id = {user_id} AND EXTRACT(MONTH from e.date) = {date.month} AND EXTRACT(YEAR from e.date) = {date.year} ORDER BY e.id DESC")
+    cur.execute(f"SELECT e.id, e.date, e.notes, e.maker, e.result, e.mid  FROM all_entries e WHERE e.user_id = {user_id} AND EXTRACT(MONTH from e.date) = {date.month} AND EXTRACT(YEAR from e.date) = {date.year} ORDER BY e.maker ASC, e.id DESC")
     return cur
     
 def get_raffles_for_date(db, date, user_id, conf):
