@@ -7,13 +7,13 @@
             &nbsp;
         </div>
         <div class="col-md-1 d-flex align-items-center">
-            <a href="/calendar?year={{ links.prev.year }}&month={{ links.prev.month}}"><<</a>
+            <a href="/calendar?year={{ links.prev.year }}&month={{ links.prev.month}}"><img src="{{ url_for('static', filename='img/prev.png') }}" alt="previous month" /></a>
         </div>
         <div class="col-md-4 text-center h1">
             {{ header.month }} {{ header.year }}
         </div>
         <div class="col-md-1 d-flex align-items-center">
-            <a href="/calendar?year={{ links.next.year }}&month={{ links.next.month}}">>></a>
+            <a href="/calendar?year={{ links.next.year }}&month={{ links.next.month}}"><img src="{{ url_for('static', filename='img/next.png') }}" alt="next month" /></a>
         </div>
         <div class="col-md-3">
             &nbsp;
