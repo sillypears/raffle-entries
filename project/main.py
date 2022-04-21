@@ -333,8 +333,8 @@ def get_percs(user_id):
                 percs['lose'] = int(perc[1])
 
         percs['total'] = percs['win'] + percs['lose']
-        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
-        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        percs['winp'] = float(round(percs['win'] / percs['total'] * 100, 2))
+        percs['losep'] = float(round(percs['lose'] / percs['total'] * 100, 2))
         db.close()
         return percs
     except:
@@ -354,8 +354,8 @@ def get_percs_by_maker_id(maker_id, user_id):
                 percs['lose'] = int(perc[1])
 
         percs['total'] = percs['win'] + percs['lose']
-        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
-        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        percs['winp'] = float(round(percs['win'] / percs['total'] * 100, 2))
+        percs['losep'] = float(round(percs['lose'] / percs['total'] * 100, 2))
         db.close()
         return percs
     except:
