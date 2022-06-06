@@ -1,6 +1,10 @@
 body {
     background-color: rgb(230, 225, 225);
 }
+
+.link-info {
+    text-decoration: none;
+}
 .result-green {
     background-color: rgb(183, 243, 183);
 }
