@@ -1,8 +1,9 @@
 from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_cors import CORS
 from urllib.parse import urlparse
 import os
-from flask_login import LoginManager
 
 from . import database
 
@@ -30,7 +31,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.config['CONFIG'] = Config
-
+    CORS(app, resources={r'/*': {'origins': '*'}})
+    
     db.init_app(app)
 
     login_manager = LoginManager()
