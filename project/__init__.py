@@ -30,7 +30,7 @@ def create_app():
     app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-    app.config['CONFIG'] = Config
+    app.config['CONFIG'] = Config   
     app.config['majorVersion'] = 1
     app.config['minorVersion'] = 0.1
     CORS(app)

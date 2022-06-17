@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for, send_file, make_response
+from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for, send_file, Response
 from flask_api import status
 from flask_login import login_required, current_user
 import math
@@ -45,7 +45,11 @@ def export_raffles(filetype='csv'):
                     temp_data[col] = data[col]
             export_data['entries'][str(data['id'])] = temp_data
         db.close()
-        return make_response(export_data, 200)
+        return Response(
+            json.dumps(export_data),
+            mimetype="application/json",
+            headers={'Content-Disposition':f"attachment;filename=raffles-{datetime.now().strftime('%Y%m%d')}-{datetime.now().timestamp()}.json"}
+        )
     elif filetype == 'csv':
         db = database.get_db(conf)
 

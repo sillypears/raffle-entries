@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, timedelta
 from pprint import pprint
+from typing import Iterable
 from urllib.parse import urlparse
 
 from flask import (Blueprint, Flask, jsonify, make_response, redirect,
@@ -13,7 +14,7 @@ from functools import wraps
 from project import create_app
 import jwt
 from . import database, db
-from .models import User
+from .models import User, Entry
 
 
 api = Blueprint('api', __name__, url_prefix="/api")
@@ -41,6 +42,7 @@ def token_required(f):
         try:
             token = auth_headers[1]
             data = jwt.decode(token, create_app().config['SECRET_KEY'], algorithms="HS256")
+            print(data)
             user = User.query.filter_by(name=data['sub']).first()
             if not user:
                 raise RuntimeError('User not found')
@@ -57,6 +59,10 @@ def token_required(f):
 def main():
     return {'message': 'OK', 'version': f"{create_app().config['majorVersion']}.{create_app().config['minorVersion']}"}
 
+@api.route('/ping', methods=["GET"])
+def ping():
+    return jsonify('pong!')
+
 @api.route('/check_user', methods=['GET'])
 @login_required
 def check_user():
@@ -68,49 +74,42 @@ def check_user():
 
 @api.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == "GET":
-        return redirect(url_for('api.main'))
-    elif request.method == "POST":
-        usernm = request.get_json()['name']
-        password = request.get_json()['password']
-        user = User.query.filter_by(name=usernm).first()
-        if not user or not check_password_hash(user.password, password):
+        return {'status': 'OK'}
+    elif request.method in ["POST"]:
+        data = request.get_json()
+        user = User.authenticate(**data)
+        if not user:
             return {'message': 'FAIL', 'text': 'Username and password do notmatch'}, 401
         token = jwt.encode({
             'sub': user.name,
-            'iat':datetime.utcnow(),
-            'exp': datetime.utcnow() + timedelta(minutes=30)},
-            create_app().config['SECRET_KEY'])
-        return jsonify({ 'token': token })
-
+            'iat': datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=24*60)},
+            create_app().config['SECRET_KEY'], 
+            algorithm="HS256"
+        )
+        return jsonify({"token": token})
     else:
         return redirect(url_for('auth.login'))
 
 @api.route('/register', methods=['POST'])
 def register():
-    usernm = request.form.get('username')
-    passwd = generate_password_hash(request.form.get('password'), method='sha256')
-    if re.fullmatch('[a-zA-Z0-9_-]+', usernm):
-        user = User.query.filter_by(name=usernm).first()
-        if user:
-            return {'message': 'FAIL', 'error': "Username already exists"}, 409
-        n_user = User(name=usernm, password=passwd)
-        db.session.add(n_user)
-        db.session.commit()
-        return {'message': 'OK', 'text': f"User {usernm} signed up"}, 201
-    else:
-        return {'message': 'FAIL', 'error': "Username contains non-supported characters"}, 400
+    data = request.get_json()
+    check_user = User.validate(**data)
+    if check_user:
+        return jsonify({'authenticated': False, 'message': 'User exists'}), 401
+    user = User(**data)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(user.to_dict()), 201
 
 @api.route('/entries', methods=['GET'])
 @token_required
 def get_entries(current_user):
-    entries = None
+    entries = []
     try:
-        print(current_user)
+        entries = current_user.entries
     except:
-        print('Could not get entries')
-        return {'message': 'FAIL'}
+        pass
+    return {'message': 'OK', 'data': [e.to_dict() for e in entries]}
 
-
-    return {'message': 'OK', 'data': entries}
