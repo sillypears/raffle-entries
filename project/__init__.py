@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from urllib.parse import urlparse
 import os
 from flask_login import LoginManager
@@ -32,7 +33,7 @@ def create_app():
     app.config['CONFIG'] = Config
     app.config['majorVersion'] = 1
     app.config['minorVersion'] = 0.1
-
+    CORS(app)
     db.init_app(app)
 
     login_manager = LoginManager()
@@ -52,7 +53,14 @@ def create_app():
                 url = request.url.replace('http://', 'https://', 1)
                 code = 301
                 return redirect(url, code=code)
-                  
+                                    
+    @app.after_request
+    def add_header(response):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = 'Access-Control-Allow-Headers, Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
+        return response
+        
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)

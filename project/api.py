@@ -1,23 +1,57 @@
-from flask import Blueprint, Flask, render_template, request, jsonify, redirect, url_for, send_file, make_response
-from flask_api import status
-from flask_login import login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-import math
-from pprint import pprint
-from datetime import datetime
-import os
-from urllib.parse import urlparse
-import json
-import csv
 import re
+from datetime import datetime, timedelta
+from pprint import pprint
+from urllib.parse import urlparse
+
+from flask import (Blueprint, Flask, jsonify, make_response, redirect,
+                   render_template, request, send_file, url_for,)
+from flask_api import status
+from flask_login import current_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
+from functools import wraps
+
 from project import create_app
-from . import database
-from . import db
+import jwt
+from . import database, db
 from .models import User
+
 
 api = Blueprint('api', __name__, url_prefix="/api")
 
 conf = create_app().config['CONFIG']
+
+def token_required(f):
+    @wraps(f)
+    def _verify(*args, **kwargs):
+        auth_headers = request.headers.get('Authorization', '').split()
+        invalid_msg = {
+            'message': 'Invalid token. Registeration and / or authentication required',
+            'authenticated': False
+        }
+        expired_msg = {
+            'message': 'Expired token. Reauthentication required.',
+            'authenticated': False
+        }
+
+        if auth_headers[0] != "RAF":
+            return jsonify(invalid_msg), 401
+        if len(auth_headers) != 2:
+            return jsonify(invalid_msg), 401
+
+        try:
+            token = auth_headers[1]
+            data = jwt.decode(token, create_app().config['SECRET_KEY'], algorithms="HS256")
+            user = User.query.filter_by(name=data['sub']).first()
+            if not user:
+                raise RuntimeError('User not found')
+            return f(user, *args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return jsonify(expired_msg), 401 # 401 is Unauthorized HTTP status code
+        except (jwt.InvalidTokenError, Exception) as e:
+            print(e)
+            return jsonify(invalid_msg), 401
+
+    return _verify
 
 @api.route('/', methods=['GET'])
 def main():
@@ -38,12 +72,17 @@ def login():
     if request.method == "GET":
         return redirect(url_for('api.main'))
     elif request.method == "POST":
-        usernm = request.form.get('username')
-        password = request.form.get('password')
+        usernm = request.get_json()['name']
+        password = request.get_json()['password']
         user = User.query.filter_by(name=usernm).first()
         if not user or not check_password_hash(user.password, password):
             return {'message': 'FAIL', 'text': 'Username and password do notmatch'}, 401
-        return {'message': 'OK', 'text': f"User ({usernm}) logged in successfully"}
+        token = jwt.encode({
+            'sub': user.name,
+            'iat':datetime.utcnow(),
+            'exp': datetime.utcnow() + timedelta(minutes=30)},
+            create_app().config['SECRET_KEY'])
+        return jsonify({ 'token': token })
 
     else:
         return redirect(url_for('auth.login'))
@@ -64,14 +103,14 @@ def register():
         return {'message': 'FAIL', 'error': "Username contains non-supported characters"}, 400
 
 @api.route('/entries', methods=['GET'])
-def get_entries():
+@token_required
+def get_entries(current_user):
     entries = None
     try:
-        cur = database.get_db(conf)
-        e = database.get_entries(cur, current_user.id, conf)
-        entries = e.fetchall()
-        cur.close()
+        print(current_user)
     except:
         print('Could not get entries')
+        return {'message': 'FAIL'}
+
 
     return {'message': 'OK', 'data': entries}
