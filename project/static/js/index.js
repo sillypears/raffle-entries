@@ -66,9 +66,9 @@ function toggleResult(id, result) {
                 $('#lose-perc-num').text(tLoses)
                 $('#win-perc-num').text(tWins)
             }
-            const tWinsPerc = (tWins / tTotal * 100).toFixed()
+            const tWinsPerc = (tWins / tTotal * 100.00).toFixed(2)
             $('span#win-perc-navbar')[0].textContent = tWinsPerc
-            $('span#lose-perc-navbar')[0].textContent = (100 - tWinsPerc).toFixed()
+            $('span#lose-perc-navbar')[0].textContent = (100.00 - tWinsPerc).toFixed(2)
         }
 
     })

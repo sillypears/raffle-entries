@@ -1,21 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="mt-4 pt-4 container">
+<div class="my-5 container-fluid">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             &nbsp;
         </div>
-        <div class="col-md-1 d-flex align-items-center">
-            <a href="/calendar?year={{ links.prev.year }}&month={{ links.prev.month}}"><<</a>
-        </div>
         <div class="col-md-4 text-center h1">
+            <a href="/calendar?year={{ links.prev.year }}&month={{ links.prev.month}}"><img src="{{ url_for('static', filename='img/prev.png') }}" alt="previous month" width="4%" /></a>
             {{ header.month }} {{ header.year }}
+            <a href="/calendar?year={{ links.next.year }}&month={{ links.next.month}}"><img src="{{ url_for('static', filename='img/next.png') }}" alt="next month" width="4%" /></a>
         </div>
-        <div class="col-md-1 d-flex align-items-center">
-            <a href="/calendar?year={{ links.next.year }}&month={{ links.next.month}}">>></a>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             &nbsp;
         </div>
     </div>
@@ -28,12 +24,17 @@
     </div>
     <div class="row">
     {% for i in calendar %}
-        <div class="col border border-dark">
-            <div class="date">
+        <div class="col border border-dark rounded">
                 {% if i[0] != 0 %}
-                    {{ i[0] }}
+                <div class="row border-bottom border-dark">
+                    <div class="col">
+                        {{ i[0] }}
+                    </div>
+                    <div class="col-lg-1 d-flex spoiler-text">
+                        {{ entries[i[0]] | length }}
+                    </div>
+                </div>
                 {% endif %}
-            </div>
             <div class="entries">
                 {% for entry in entries[i[0]] %}
                 <div id="entry-{{entry[0]}}" class="card text-center text-white my-1 {% if entry[4] == 1 %} bg-success {% else %} bg-danger {% endif %} bg-gradient" >

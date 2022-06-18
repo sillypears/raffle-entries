@@ -301,7 +301,7 @@ def get_calendar():
     db = database.get_db(conf)
     e = database.get_raffles_for_calendar_month(db, find_date, current_user.id, conf).fetchall()
     db.close()
-    cal = build_calendar(month=find_date.month, year=find_date.month)
+    cal = build_calendar(month=find_date.month, year=find_date.year)
     entries = {}
     for entry in e:
         if entries.get(entry[1].day):
@@ -333,8 +333,8 @@ def get_percs(user_id):
                 percs['lose'] = int(perc[1])
 
         percs['total'] = percs['win'] + percs['lose']
-        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
-        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        percs['winp'] = float(round(percs['win'] / percs['total'] * 100, 2))
+        percs['losep'] = float(round(percs['lose'] / percs['total'] * 100, 2))
         db.close()
         return percs
     except:
@@ -354,8 +354,8 @@ def get_percs_by_maker_id(maker_id, user_id):
                 percs['lose'] = int(perc[1])
 
         percs['total'] = percs['win'] + percs['lose']
-        percs['winp'] = int(round(percs['win'] / percs['total'] * 100, 0))
-        percs['losep'] = int(round(percs['lose'] / percs['total'] * 100, 0))
+        percs['winp'] = float(round(percs['win'] / percs['total'] * 100, 2))
+        percs['losep'] = float(round(percs['lose'] / percs['total'] * 100, 2))
         db.close()
         return percs
     except:
