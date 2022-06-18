@@ -42,7 +42,6 @@ def token_required(f):
         try:
             token = auth_headers[1]
             data = jwt.decode(token, create_app().config['SECRET_KEY'], algorithms="HS256")
-            print(data)
             user = User.query.filter_by(name=data['sub']).first()
             if not user:
                 raise RuntimeError('User not found')
@@ -88,7 +87,7 @@ def login():
             create_app().config['SECRET_KEY'], 
             algorithm="HS256"
         )
-        return jsonify({"token": token})
+        return jsonify({"token": token, "userid": user.id})
     else:
         return redirect(url_for('auth.login'))
 
