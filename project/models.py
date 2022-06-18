@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(1000), unique=True, nullable=False)
     makers = db.relationship("Maker", backref="user")
-    entries = db.relationship("Entry", backref="user")
+    entries = db.relationship("Entry", order_by="desc(Entry.id)", backref="user")
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
