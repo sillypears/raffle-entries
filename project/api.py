@@ -41,7 +41,7 @@ def token_required(f):
 
         try:
             token = auth_headers[1]
-            data = jwt.decode(token, create_app().config['SECRET_KEY'], algorithms="HS256")
+            data = jwt.decode(token, create_app().config['pub_key'], algorithms="RS256")
             user = User.query.filter_by(name=data['sub']).first()
             if not user:
                 raise RuntimeError('User not found')
@@ -84,10 +84,10 @@ def login():
             'sub': user.name,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=24*60)},
-            create_app().config['SECRET_KEY'], 
-            algorithm="HS256"
+            create_app().config['priv_key'], 
+            algorithm="RS256"
         )
-        return jsonify({"token": token, "userid": user.id})
+        return jsonify({"token": token, "userid": user.id, "entries": len(user.entries)})
     else:
         return redirect(url_for('auth.login'))
 
@@ -110,5 +110,5 @@ def get_entries(current_user):
         entries = current_user.entries
     except:
         pass
-    return {'message': 'OK', 'data': [e.to_dict() for e in entries]}
+    return {'message': 'OK', 'data': [e.to_dict() for e in entries], "total": len(entries)}
 
