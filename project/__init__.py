@@ -33,10 +33,6 @@ def create_app():
     app.config['CONFIG'] = Config   
     app.config['majorVersion'] = 1
     app.config['minorVersion'] = 0.1
-    with open('project/id_rsa', 'r') as f:
-        app.config['priv_key'] = f.read()
-    with open('project/id_rsa.pub', 'r') as f:
-        app.config['pub_key'] = f.read()
     CORS(app)
     db.init_app(app)
 
