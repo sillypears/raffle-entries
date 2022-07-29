@@ -84,8 +84,8 @@ def login():
             'sub': user.name,
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(minutes=24*60)},
-            create_app().config['priv_key'], 
-            algorithm="RS256"
+            create_app().config['SECRET_KEY'], 
+            algorithm="HS256"
         )
         return jsonify({"token": token, "userid": user.id, "entries": len(user.entries)})
     else:
