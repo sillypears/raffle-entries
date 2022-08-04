@@ -120,12 +120,12 @@ def update_maker_by_id(db, id, data, user_id, conf):
 
 def del_maker(db, id, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"DELETE FROM makers WHERE id = {id}")
+    cur.execute(f"DELETE FROM makers WHERE id = {id} AND user_id = {user_id}")
     return cur
 
 def del_entry(db, id, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"DELETE FROM entries WHERE id = {id}")
+    cur.execute(f"DELETE FROM entries WHERE id = {id} AND user_id = {user_id}")
     return cur
 
 def add_new_user(db, username, password, conf):
