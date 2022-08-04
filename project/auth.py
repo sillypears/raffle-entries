@@ -17,6 +17,7 @@ def login():
         password = request.form.get('password')
         remember = True if request.form.get('remember') else False
         user = User.query.filter_by(name=name).first()
+        print(check_password_hash(user.password, password))
         if not user or not check_password_hash(user.password, password):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login'))
@@ -29,7 +30,7 @@ def login():
 def signup():
     if request.method == "POST":
         username = request.form.get('username')
-        password = generate_password_hash(request.form.get('password'), method='sha256')
+        password = request.form.get('password')
         user = User.query.filter_by(name=username).first() # if this returns a user, then the email already exists in database
 
         if user: # if a user is found, we want to redirect back to signup page so user can try again
@@ -38,7 +39,6 @@ def signup():
 
         # create a new user with the form data. Hash the password so the plaintext version isn't saved.
         new_user = User(name=username, password=password)
-
         # add the new user to the database
         db.session.add(new_user)
         db.session.commit()
