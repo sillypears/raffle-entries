@@ -110,12 +110,12 @@ def update_entry(db, id, data, user_id, conf):
 
 def add_maker(db, data, user_id, conf):
     cur = db.cursor()
-    cur.execute("INSERT INTO makers (name, display, instagram, user_id) VALUES (%(name)s, %(display)s, %(ig)s, %(u_id)s) RETURNING id", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'u_id':user_id})
+    cur.execute("INSERT INTO makers (name, display, instagram, user_id) VALUES (%(name)s, %(display)s, %(ig)s, %(u_id)s) RETURNING id", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'u_id':int(user_id)})
     return cur
 
 def update_maker_by_id(db, id, data, user_id, conf):
     cur = db.cursor()
-    cur.execute("UPDATE makers SET name=%(name)s, display=%(display)s, instagram=%(ig)s WHERE id=%(m_id)s AND user_id=%(u_id)s)", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'm_id': id, 'u_id':user_id})
+    cur.execute("UPDATE makers SET name=%(name)s, display=%(display)s, instagram=%(ig)s WHERE id=%(m_id)s AND user_id=%(u_id)s)", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'm_id': int(id), 'u_id':user_id})
     return cur
 
 def del_maker(db, id, user_id, conf):
