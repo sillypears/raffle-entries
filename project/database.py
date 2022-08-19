@@ -115,7 +115,7 @@ def add_maker(db, data, user_id, conf):
 
 def update_maker_by_id(db, id, data, user_id, conf):
     cur = db.cursor()
-    cur.execute("UPDATE makers SET name=%(name)s, display=%(display)s, instagram=%(ig)s WHERE id=%(m_id)s AND user_id=%(u_id)s)", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'm_id': int(id), 'u_id':user_id})
+    cur.execute("UPDATE makers SET name=%(name)s, display=%(display)s, instagram=%(ig)s WHERE id=%(m_id)s AND user_id=%(u_id)s", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'm_id': int(id), 'u_id':user_id})
     return cur
 
 def del_maker(db, id, user_id, conf):
