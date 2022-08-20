@@ -191,3 +191,12 @@ def get_raffles_for_date_expanded(db, date, user_id, conf):
     cur = db.cursor()
     cur.execute(f"SELECT * FROM all_entries e WHERE e.user_id = {user_id} AND e.date = '{date}' ORDER BY e.id DESC")
     return cur
+
+def get_raffle_count_by_month(db, user_id, conf):
+
+    cur = db.cursor()
+    try:
+        cur.execute(f"SELECT to_char(e.date, 'YYYY-MM'),COALESCE(COUNT(to_char(e.date, 'YYYY-MM')),0) FROM entries e WHERE user_id={int(user_id)} GROUP BY to_char(e.date, 'YYYY-MM') ORDER BY to_char(e.date, 'YYYY-MM') DESC LIMIT 5")
+    except:
+        pass
+    return cur

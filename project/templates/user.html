@@ -58,10 +58,37 @@
             </div>
         </div>
         <div class="row">
+            <div class="col">
+                <div class="card shadow-sm my-4">
+                    <div class="class-title m-4">
+                        Last 5 (or less) Monthly Raffle Count
+                    </div>
+                    <div class="card-body">
+                        {% for month in month_raffles %}
+                        <div>
+                        <span class="">{{ month[0] }}</span>: {{ month[1] }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+
+            </div>
+            <div class="col">
+
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col my-4">
                 <button class="btn btn-danger" onclick="location.href='/logout'">Logout</button>     
             </div>
         </div>
+        
     </div>
 
 </div>

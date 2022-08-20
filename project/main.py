@@ -40,8 +40,10 @@ def user_data():
     top_makers = m3.fetchall()
     e3 = database.get_top_three_winning_makers(cur, current_user.id, conf)
     top_winners = e3.fetchall()
+    m1 = database.get_raffle_count_by_month(cur, current_user.id, conf)
+    month_raffles = m1.fetchall()
     cur.close()
-    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)})
+    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)}, month_raffles=month_raffles)
 
 
 @main.route("/entry/<id>", methods=["GET"])
