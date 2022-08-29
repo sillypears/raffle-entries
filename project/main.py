@@ -42,8 +42,10 @@ def user_data():
     top_winners = e3.fetchall()
     m1 = database.get_raffle_count_by_month(cur, current_user.id, conf)
     month_raffles = m1.fetchall()
+    m2 = database.get_raffle_win_count_by_month(cur, current_user.id, conf)
+    month_wins = m2.fetchall()
     cur.close()
-    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)}, month_raffles=month_raffles)
+    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)}, month_raffles=month_raffles, month_wins=month_wins)
 
 
 @main.route("/entry/<id>", methods=["GET"])
@@ -72,7 +74,6 @@ def makers():
                     if perc[2]:
                         makers[perc[0]]['win'] += perc[3]
                         makers[perc[0]]['total'] += perc[3]
-
                     else:
                         makers[perc[0]]['lose'] += perc[3]
                         makers[perc[0]]['total'] += perc[3]

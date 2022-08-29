@@ -200,3 +200,12 @@ def get_raffle_count_by_month(db, user_id, conf):
     except:
         pass
     return cur
+
+def get_raffle_win_count_by_month(db, user_id, conf):
+
+    cur = db.cursor()
+    try:
+        cur.execute(f"SELECT to_char(e.date, 'YYYY-MM'),COALESCE(COUNT(to_char(e.date, 'YYYY-MM')),0) FROM entries e WHERE user_id={int(user_id)} AND e.result = true GROUP BY to_char(e.date, 'YYYY-MM') ORDER BY to_char(e.date, 'YYYY-MM') DESC LIMIT 5")
+    except:
+        pass
+    return cur
