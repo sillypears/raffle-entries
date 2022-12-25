@@ -44,8 +44,17 @@ def user_data():
     month_raffles = m1.fetchall()
     m2 = database.get_raffle_win_count_by_month(cur, current_user.id, conf)
     month_wins = m2.fetchall()
+    month_raf = {}
+    for m in month_raffles:
+        month_raf[m[0]] = m[1]
+    month_perc = {}
+    for win in month_wins:
+        wins = int(win[1])
+        win = win[0]
+        if win in month_raf.keys():
+            month_perc[win] = {'wins': wins, 'perc': round(wins/int(month_raf[win])* 100)}
     cur.close()
-    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)}, month_raffles=month_raffles, month_wins=month_wins)
+    return render_template("user.html", nav="user", percs=get_percs(current_user.id), user=current_user, entries=entries, makers=makers, top_makers=top_makers, top_winners=top_winners, totals={"entries": len(entries), "makers": len(makers)}, month_raffles=month_raffles, month_wins=month_wins, month_perc=month_perc)
 
 
 @main.route("/entry/<id>", methods=["GET"])

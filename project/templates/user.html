@@ -75,9 +75,9 @@
                             </div>
                             <div class="col">
                                 <div class="h4">Wins</div>
-                                {% for month in month_wins %}
+                                {% for month in month_perc %}
                                 <div>
-                                    <span class="">{{ month[0] }}</span>: {{ month[1] }}
+                                    <span class="">{{ month }}</span>: <span class="text-strong">{{ month_perc[month].wins }}</span> <span class="small">({{ month_perc[month].perc}}%)</span> 
                                 </div>
                                 {% endfor %}
                             </div>
