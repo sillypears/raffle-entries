@@ -110,22 +110,22 @@ def update_entry(db, id, data, user_id, conf):
 
 def add_maker(db, data, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"INSERT INTO makers (name, display, instagram, user_id) VALUES ('{data['name']}', '{data['display']}', '{data['instagram']}', {user_id}) RETURNING id")
+    cur.execute("INSERT INTO makers (name, display, instagram, user_id) VALUES (%(name)s, %(display)s, %(ig)s, %(u_id)s) RETURNING id", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'u_id':int(user_id)})
     return cur
 
 def update_maker_by_id(db, id, data, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"""UPDATE makers SET name='{data['name']}', display='{(data['display'])}', instagram='{data['instagram']}' WHERE id={id} AND user_id={user_id}""")
+    cur.execute("UPDATE makers SET name=%(name)s, display=%(display)s, instagram=%(ig)s WHERE id=%(m_id)s AND user_id=%(u_id)s", {'name':data['name'], 'display':data['display'], 'ig':data['instagram'], 'm_id': int(id), 'u_id':user_id})
     return cur
 
 def del_maker(db, id, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"DELETE FROM makers WHERE id = {id}")
+    cur.execute(f"DELETE FROM makers WHERE id = {id} AND user_id = {user_id}")
     return cur
 
 def del_entry(db, id, user_id, conf):
     cur = db.cursor()
-    cur.execute(f"DELETE FROM entries WHERE id = {id}")
+    cur.execute(f"DELETE FROM entries WHERE id = {id} AND user_id = {user_id}")
     return cur
 
 def add_new_user(db, username, password, conf):
@@ -190,4 +190,22 @@ def get_raffles_for_date_expanded(db, date, user_id, conf):
     """
     cur = db.cursor()
     cur.execute(f"SELECT * FROM all_entries e WHERE e.user_id = {user_id} AND e.date = '{date}' ORDER BY e.id DESC")
+    return cur
+
+def get_raffle_count_by_month(db, user_id, conf):
+
+    cur = db.cursor()
+    try:
+        cur.execute(f"SELECT to_char(e.date, 'YYYY-MM'),COALESCE(COUNT(to_char(e.date, 'YYYY-MM')),0) FROM entries e WHERE user_id={int(user_id)} GROUP BY to_char(e.date, 'YYYY-MM') ORDER BY to_char(e.date, 'YYYY-MM') DESC LIMIT 5")
+    except:
+        pass
+    return cur
+
+def get_raffle_win_count_by_month(db, user_id, conf):
+
+    cur = db.cursor()
+    try:
+        cur.execute(f"SELECT to_char(e.date, 'YYYY-MM'),COALESCE(COUNT(to_char(e.date, 'YYYY-MM')),0) FROM entries e WHERE user_id={int(user_id)} AND e.result = true GROUP BY to_char(e.date, 'YYYY-MM') ORDER BY to_char(e.date, 'YYYY-MM') DESC LIMIT 5")
+    except:
+        pass
     return cur

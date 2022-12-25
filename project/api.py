@@ -87,7 +87,7 @@ def login():
             create_app().config['SECRET_KEY'], 
             algorithm="HS256"
         )
-        return jsonify({"token": token, "userid": user.id})
+        return jsonify({"token": token, "userid": user.id, "entries": len(user.entries)})
     else:
         return redirect(url_for('auth.login'))
 
@@ -110,5 +110,5 @@ def get_entries(current_user):
         entries = current_user.entries
     except:
         pass
-    return {'message': 'OK', 'data': [e.to_dict() for e in entries]}
+    return {'message': 'OK', 'data': [e.to_dict() for e in entries], "total": len(entries)}
 

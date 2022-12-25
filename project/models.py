@@ -10,10 +10,10 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, Sequence('users_id_seq'), unique=True, primary_key=True, nullable=False) # primary keys are required by SQLAlchemy
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     name = db.Column(db.String(1000), unique=True, nullable=False)
     makers = db.relationship("Maker", backref="user")
-    entries = db.relationship("Entry", backref="user")
+    entries = db.relationship("Entry", order_by="desc(Entry.epoch)", backref="user")
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
@@ -46,6 +46,7 @@ class User(UserMixin, db.Model):
             return None
 
         return user
+        
     def to_dict(self):
         return dict(id=self.id, name=self.name)
 
@@ -72,4 +73,4 @@ class Entry(db.Model):
     maker_name = db.relationship("Maker", primaryjoin=("and_(Entry.maker_id==Maker.id)"), backref="makers")
 
     def to_dict(self):
-        return dict(id=self.id, user_id=self.user_id, maker_id=self.maker_id, maker_name=self.maker_name.name, epoch=self.epoch, raffle_link=self.raffle_link, notes=self.notes, result=self.result, date=self.date)
+        return dict(id=self.id, user_id=self.user_id, maker_id=self.maker_id, maker_name=self.maker_name.name, maker_display=self.maker_name.display, epoch=self.epoch, raffle_link=self.raffle_link, notes=self.notes, result=self.result, date=self.date)
