@@ -152,5 +152,5 @@ cython_debug/
 #.idea/
 
 db.sqlite
-set_envs.*
+set_*envs.*
 id_rsa*

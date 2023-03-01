@@ -15,7 +15,12 @@ Now you need env variables instead of the config file :)
 4) FLASK_ENV
    1) development/production
 
+# How 2 Run
 
+1) Enable venv
+  * `.\env\Scripts\activate`
+2) Start flask
+  * `flask run`
 # If using something like AWS or Heroku
 Setting up [Postgres on Heroku](https://devcenter.heroku.com/articles/heroku-postgresql).
 
